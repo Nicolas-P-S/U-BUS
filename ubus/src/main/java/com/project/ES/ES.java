@@ -16,7 +16,6 @@ public class ES {
             else
                 System.out.println("ERRO: Digite uma String");
         }
-        input.close();
         return retornoStr;
     }
 
@@ -34,7 +33,6 @@ public class ES {
             else
                 System.out.println("ERRO: Digite um Int");
         }
-        input.close();
         return retornoInt;
     }
 
@@ -51,12 +49,14 @@ public class ES {
                     continuar = true;
                 }
                 else
-                    System.out.printf("ERRO: digite um valor entre %d e %d", min, max);
+                    System.out.printf("ERRO: digite um valor entre %d e %d\n", min, max);
             }
-            else
+            else{
                 System.out.println("ERRO: Digite um Int");
+                input.nextLine(); // consome o input
+                input.nextLine(); // consome o \n
+            }
         }
-        input.close();
         return retornoInt;
     }
 
@@ -74,7 +74,7 @@ public class ES {
             else
                 System.out.println("ERRO: Digite um Float");
         }
-        input.close();
+
         return retornoStr;
     }
 }
