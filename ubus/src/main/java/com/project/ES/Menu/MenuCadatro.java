@@ -1,5 +1,5 @@
 package com.project.ES.Menu;
-import com.project.ES.ES;
+import com.project.entity.Usuario;
 
 public class MenuCadatro extends MenuBase{
     public void logoCadastro(){
@@ -13,7 +13,6 @@ public class MenuCadatro extends MenuBase{
     public String criarUser(){
         boolean continuar = false;
         String resposta = "";
-        ES es = new ES();
 
         while (!continuar){
             System.out.println("(1/2) Crie um usuario: ");
@@ -34,7 +33,6 @@ public class MenuCadatro extends MenuBase{
     public String criarPass(){
         boolean continuar = false;
         String resposta = "";
-        ES es = new ES();
         
         while (!continuar){
             System.out.println("(2/2) Crie uma senha: ");
@@ -52,13 +50,13 @@ public class MenuCadatro extends MenuBase{
         return resposta;
     }
 
-    public void inicioCadastro(){ // metodo inicial para cadastro
+    public Usuario inicioCadastro(){ // metodo inicial para cadastro
         logoCadastro();
         String user = criarUser();
         logoCadastro();
         String password = criarPass();
-
-        System.out.println(user);
-        System.out.println(password);
+        Usuario usuario = new Usuario(user, password);
+        
+        return usuario;
     }
 }

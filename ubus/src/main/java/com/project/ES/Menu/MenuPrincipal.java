@@ -1,5 +1,7 @@
 package com.project.ES.Menu;
 import com.project.ES.ES;
+import com.project.entity.Usuario;
+import com.project.DB.DataBaseManager;
 
 public class MenuPrincipal extends MenuBase{
     public void menu(){
@@ -19,7 +21,11 @@ public class MenuPrincipal extends MenuBase{
             switch (es.entradaInt(1, 3)) {
                 case 1:
                     MenuCadatro cadastro = new MenuCadatro();
-                    cadastro.inicioCadastro();
+                    Usuario usuario = cadastro.inicioCadastro();
+                    DataBaseManager db = new DataBaseManager("censurado", "censurado");
+                    db.conectar();
+                    db.criarBanco();
+                    db.salvarUsuario(usuario);
                     continuar=true;
                     break;
                 case 2:
@@ -33,7 +39,6 @@ public class MenuPrincipal extends MenuBase{
                     limparConsole();
                     continuar=true;
                     break;
-
             }
             
         }
