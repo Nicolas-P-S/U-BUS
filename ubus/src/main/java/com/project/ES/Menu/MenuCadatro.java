@@ -1,7 +1,10 @@
 package com.project.ES.Menu;
 import com.project.entity.Usuario;
+import com.project.DB.DataBaseManager;
 
 public class MenuCadatro extends MenuBase{
+    DataBaseManager db = new DataBaseManager("censurado", "censurado");
+
     public void logoCadastro(){
         limparConsole();
         System.out.println("""
@@ -18,11 +21,14 @@ public class MenuCadatro extends MenuBase{
             System.out.println("(1/2) Crie um usuario: ");
             resposta = this.es.entradaString();
 
-            if (resposta.length() >= 4 && resposta.length() <= 20)
+            if ((resposta.length() >= 4 && resposta.length() <= 20) && (db.pesquisarUsuarioNome(resposta) == null))
                 continuar=true;
             else{
                 limparConsole();
-                System.out.println("ERRO: digite uma usuario entre 4 a 20 caracteres");
+                if (resposta.length() < 4 || resposta.length() > 20)
+                    System.out.println("ERRO: digite um usuario entre 4 a 20 caracteres ou usuario!");
+                else
+                    System.out.println("ERRO: usuario já cadastrado!");
                 pausarConsole();
                 limparConsole();
             }

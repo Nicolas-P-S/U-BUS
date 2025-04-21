@@ -7,6 +7,10 @@ public class MenuPrincipal extends MenuBase{
     public void menu(){
         boolean continuar = false;
         ES es = new ES();
+        DataBaseManager db = new DataBaseManager("censurado", "censurado");
+        db.conectar();
+        db.criarBanco();
+        Usuario usuario = null;
         
         while (!continuar){
             System.out.println("""
@@ -21,15 +25,13 @@ public class MenuPrincipal extends MenuBase{
             switch (es.entradaInt(1, 3)) {
                 case 1:
                     MenuCadatro cadastro = new MenuCadatro();
-                    Usuario usuario = cadastro.inicioCadastro();
-                    DataBaseManager db = new DataBaseManager("censurado", "censurado");
-                    db.conectar();
-                    db.criarBanco();
+                    usuario = cadastro.inicioCadastro();
                     db.salvarUsuario(usuario);
                     continuar=true;
                     break;
                 case 2:
-                    System.out.println("2");
+                    MenuLogin login = new MenuLogin();
+                    usuario = login.inicoLogin();
                     continuar=true;
                     break;
                 case 3:
