@@ -1,9 +1,10 @@
 package com.project.ES.Menu;
 import com.project.DB.DataBaseManager;
+import com.project.entity.Admin;
 import com.project.entity.Usuario;
 
 public class MenuLogin extends MenuBase{
-    DataBaseManager db = new DataBaseManager("censurado", "censurado");
+    DataBaseManager db = new DataBaseManager("", "");
     
     public void logoLogin(){
         limparConsole();
@@ -57,13 +58,19 @@ public class MenuLogin extends MenuBase{
         return usuario.getSenha();
     }
 
-    public Usuario inicoLogin(){
-        logoLogin();
-        String name = inserirUser();
-        logoLogin();
-        String password = inserirPass();
-        
-        Usuario usuario = new Usuario(name, password);
-        return usuario;
+    public Usuario inicoLogin() {
+    logoLogin();
+    String name = inserirUser();
+    logoLogin();
+    String password = inserirPass();
+
+    Admin admin = db.buscarAdmin(name, password);
+    if (admin != null) {
+        return admin; 
     }
+
+    return new Usuario(name, password);
+}
+
+    
 }
