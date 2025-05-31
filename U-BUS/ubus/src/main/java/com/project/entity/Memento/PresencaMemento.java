@@ -13,6 +13,8 @@ public class PresencaMemento {
                 Aluno copia = new Aluno(
                     a.getNome(),
                     a.getSenha(),
+                    a.getNome_Aluno(),
+                    a.getSobrenome_Aluno(),
                     a.getCpf(),
                     a.getCep(),
                     a.getEnderco(),

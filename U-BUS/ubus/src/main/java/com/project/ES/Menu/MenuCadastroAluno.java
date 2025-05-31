@@ -16,6 +16,8 @@ public class MenuCadastroAluno extends MenuBase {
         String nome = usuario.getNome();
         String senha = usuario.getSenha();
 
+        String nome_aluno = lerComValidacao("Nome ", 1, 45);
+        String sobrenome_aluno = lerComValidacao("Sobrenome ", 1, 45);
         String cpf = lerComValidacao("CPF (somente números)", 11, 11);
         String cep = lerComValidacao("CEP (somente números)", 8, 8);
         String endereco = lerComValidacao("Endereço", 5, 100);
@@ -27,7 +29,7 @@ public class MenuCadastroAluno extends MenuBase {
         String telefone = lerComValidacao("Telefone (com DDD)", 10, 11);
         String email = lerComValidacao("Email", 5, 100);
 
-        return new Aluno(nome, senha, cpf, cep, endereco, bairro, curso, 
+        return new Aluno(nome, senha,nome_aluno,sobrenome_aluno, cpf, cep, endereco, bairro, curso, 
                         semestre, turno, instituicao, telefone, email);
     }
 

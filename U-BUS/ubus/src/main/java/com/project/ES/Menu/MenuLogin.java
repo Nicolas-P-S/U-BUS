@@ -7,7 +7,7 @@ import com.project.entity.Usuario;
 import com.project.ES.ES;
 
 public class MenuLogin extends MenuBase {
-    private DataBaseManager db = new DataBaseManager("", "");
+    private DataBaseManager db = new DataBaseManager("postgres", "pombal10");
     private ES es = new ES();
     
     public void logoLogin() {

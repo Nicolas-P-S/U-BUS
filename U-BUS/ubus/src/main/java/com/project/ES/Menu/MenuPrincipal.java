@@ -41,7 +41,7 @@ public class MenuPrincipal extends MenuBase {
                 case 1 -> {
                     MenuCadatro cadastro = new MenuCadatro();
                     Usuario usuario = cadastro.inicioCadastro();
-                    DataBaseManager db = new DataBaseManager("", "");
+                    DataBaseManager db = new DataBaseManager("postgres", "pombal10");
                     db.conectar();
                     db.salvarUsuario(usuario);
                     System.out.println("Usuário cadastrado com sucesso!");
@@ -69,7 +69,7 @@ public class MenuPrincipal extends MenuBase {
                         if (usuarioLogado instanceof Admin) {
                             MenuCadastroMotorista menuMotorista = new MenuCadastroMotorista();
                             Motorista motorista = menuMotorista.cadastrarMotorista();
-                            DataBaseManager db = new DataBaseManager("", "");
+                            DataBaseManager db = new DataBaseManager("postgres", "pombal10");
                             db.conectar();
                             db.salvarMotorista(motorista);
                             System.out.println("Motorista cadastrado com sucesso!");
@@ -82,7 +82,7 @@ public class MenuPrincipal extends MenuBase {
                 }
                 case 4 -> {
                     if (usuarioLogado instanceof Admin) {
-                        DataBaseManager db = new DataBaseManager("", "");
+                        DataBaseManager db = new DataBaseManager("postgres", "pombal10");
                         db.conectar();
                         List<Motorista> motoristas = db.consultarMotoristas();
 
@@ -103,7 +103,7 @@ public class MenuPrincipal extends MenuBase {
                 case 5 -> {
                     MenuCadastroAdm menuCadastroAdm = new MenuCadastroAdm();
                     Admin admin = menuCadastroAdm.cadastrarAdm();
-                    DataBaseManager db = new DataBaseManager("", "");
+                    DataBaseManager db = new DataBaseManager("postgres", "pombal10");
                     db.conectar();
                     db.salvarAdmin(admin);
                     System.out.println("Administrador cadastrado com sucesso!");
@@ -116,7 +116,7 @@ public class MenuPrincipal extends MenuBase {
                     } else {
                         MenuCadastroAluno menuAluno = new MenuCadastroAluno();
                         Aluno aluno = menuAluno.cadastrarAluno();
-                        DataBaseManager db = new DataBaseManager("", "");
+                        DataBaseManager db = new DataBaseManager("postgres", "pombal10");
                         db.conectar();
                         db.salvarAluno(aluno);
                         System.out.println("Aluno cadastrado com sucesso!");
@@ -126,7 +126,7 @@ public class MenuPrincipal extends MenuBase {
                 }
                 case 7 -> {
                     if (usuarioLogado instanceof Admin) {
-                        DataBaseManager db = new DataBaseManager("", "");
+                        DataBaseManager db = new DataBaseManager("postgres", "pombal10");
                         db.conectar();
                         List<Aluno> alunos = db.consultarAlunos();
 

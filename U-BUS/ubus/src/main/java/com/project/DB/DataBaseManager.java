@@ -93,6 +93,8 @@ public class DataBaseManager {
                     "id SERIAL PRIMARY KEY, " +
                     "nome VARCHAR(100) NOT NULL, " +
                     "senha VARCHAR(100) NOT NULL, " +
+                    "nome_aluno VARCHAR(100) NOT NULL, " + 
+                    "sobrenome_aluno VARCHAR(100) NOT NULL, " +
                     "cpf VARCHAR(14) UNIQUE NOT NULL, " +
                     "cep VARCHAR(9) NOT NULL, " +
                     "endereco TEXT NOT NULL, " +
@@ -142,78 +144,82 @@ public class DataBaseManager {
         }
     }
 
-    public void salvarAluno(Aluno aluno) {
-        try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
-            conn = DriverManager.getConnection(url, user, pass);
+public void salvarAluno(Aluno aluno) {
+    try {
+        String url = "jdbc:postgresql://localhost:5432/teste";
+        conn = DriverManager.getConnection(url, user, pass);
 
-            String sql = "INSERT INTO alunos (" +
-                    "nome, senha, cpf, cep, endereco, bairro, curso, " +
-                    "semestre, turno, instituicao, telefone, email, vai_para_aula" +
-                    ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        String sql = "INSERT INTO alunos (" +
+                "nome, senha, nome_aluno, sobrenome_aluno, cpf, cep, endereco, bairro, curso, " +
+                "semestre, turno, instituicao, telefone, email, vai_para_aula" +
+                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement stmt = conn.prepareStatement(sql);
 
-            stmt.setString(1, aluno.getNome());
-            stmt.setString(2, aluno.getSenha());
-            stmt.setString(3, aluno.getCpf());
-            stmt.setString(4, aluno.getCep());
-            stmt.setString(5, aluno.getEnderco());
-            stmt.setString(6, aluno.getBairro());
-            stmt.setString(7, aluno.getCurso());
-            stmt.setInt(8, aluno.getSemestre());
-            stmt.setString(9, aluno.getTurno());
-            stmt.setString(10, aluno.getInstituicao());
-            stmt.setString(11, aluno.getTelefone());
-            stmt.setString(12, aluno.getEmail());
-            stmt.setBoolean(13, aluno.isVaiParaAula());
+        stmt.setString(1, aluno.getNome()); // nome de usuário
+        stmt.setString(2, aluno.getSenha());
+        stmt.setString(3, aluno.getNome_Aluno()); // nome do aluno
+        stmt.setString(4, aluno.getSobrenome_Aluno()); // sobrenome do aluno
+        stmt.setString(5, aluno.getCpf());
+        stmt.setString(6, aluno.getCep());
+        stmt.setString(7, aluno.getEnderco());
+        stmt.setString(8, aluno.getBairro());
+        stmt.setString(9, aluno.getCurso());
+        stmt.setInt(10, aluno.getSemestre());
+        stmt.setString(11, aluno.getTurno());
+        stmt.setString(12, aluno.getInstituicao());
+        stmt.setString(13, aluno.getTelefone());
+        stmt.setString(14, aluno.getEmail());
+        stmt.setBoolean(15, aluno.isVaiParaAula());
 
-            stmt.executeUpdate();
+        stmt.executeUpdate();
 
-            salvarUsuario(new Usuario(aluno.getNome(), aluno.getSenha()));
-        } catch (Exception e) {
-            System.out.println("ERRO ao salvar aluno: " + e);
-        }
+        salvarUsuario(new Usuario(aluno.getNome(), aluno.getSenha()));
+    } catch (Exception e) {
+        System.out.println("ERRO ao salvar aluno: " + e);
     }
+}
 
-    public Aluno buscarAluno(String nome, String senha) {
-        Aluno aluno = null;
-        try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
-            conn = DriverManager.getConnection(url, user, pass);
+public Aluno buscarAluno(String nome, String senha) {
+    Aluno aluno = null;
+    try {
+        String url = "jdbc:postgresql://localhost:5432/teste";
+        conn = DriverManager.getConnection(url, user, pass);
 
-            String sql = "SELECT * FROM alunos WHERE nome = ? AND senha = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, nome);
-            stmt.setString(2, senha);
-            ResultSet rs = stmt.executeQuery();
+        String sql = "SELECT * FROM alunos WHERE nome = ? AND senha = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, nome);
+        stmt.setString(2, senha);
+        ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                aluno = new Aluno(
-                        rs.getString("nome"),
-                        rs.getString("senha"),
-                        rs.getString("cpf"),
-                        rs.getString("cep"),
-                        rs.getString("endereco"),
-                        rs.getString("bairro"),
-                        rs.getString("curso"),
-                        rs.getInt("semestre"),
-                        rs.getString("turno"),
-                        rs.getString("instituicao"),
-                        rs.getString("telefone"),
-                        rs.getString("email"));
+        if (rs.next()) {
+            aluno = new Aluno(
+                    rs.getString("nome"), // nome de usuário
+                    rs.getString("senha"),
+                    rs.getString("nome_aluno"), // nome do aluno
+                    rs.getString("sobrenome_aluno"), // sobrenome do aluno
+                    rs.getString("cpf"),
+                    rs.getString("cep"),
+                    rs.getString("endereco"),
+                    rs.getString("bairro"),
+                    rs.getString("curso"),
+                    rs.getInt("semestre"),
+                    rs.getString("turno"),
+                    rs.getString("instituicao"),
+                    rs.getString("telefone"),
+                    rs.getString("email"));
 
-                try {
-                    aluno.setVaiParaAula(rs.getBoolean("vai_para_aula"));
-                } catch (SQLException e) {
-                    System.out.println("Aviso: Coluna vai_para_aula não encontrada, usando valor padrão false");
-                    aluno.setVaiParaAula(false);
-                }
+            try {
+                aluno.setVaiParaAula(rs.getBoolean("vai_para_aula"));
+            } catch (SQLException e) {
+                System.out.println("Aviso: Coluna vai_para_aula não encontrada, usando valor padrão false");
+                aluno.setVaiParaAula(false);
             }
-        } catch (Exception e) {
-            System.out.println("ERRO ao buscar aluno: " + e.getMessage());
         }
-        return aluno;
+    } catch (Exception e) {
+        System.out.println("ERRO ao buscar aluno: " + e.getMessage());
     }
+    return aluno;
+}
 
     public Admin pesquisarAdminPorNome(String nome) {
         Admin admin = null;
@@ -240,82 +246,86 @@ public class DataBaseManager {
         return admin;
     }
 
-    public Aluno pesquisarAlunoPorCpf(String cpf) {
-        Aluno aluno = null;
-        try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
-            conn = DriverManager.getConnection(url, user, pass);
+ public Aluno pesquisarAlunoPorCpf(String cpf) {
+    Aluno aluno = null;
+    try {
+        String url = "jdbc:postgresql://localhost:5432/teste";
+        conn = DriverManager.getConnection(url, user, pass);
 
-            String sql = "SELECT * FROM alunos WHERE cpf = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, cpf);
-            ResultSet rs = stmt.executeQuery();
+        String sql = "SELECT * FROM alunos WHERE cpf = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, cpf);
+        ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                aluno = new Aluno(
-                        rs.getString("nome"),
-                        rs.getString("senha"),
-                        rs.getString("cpf"),
-                        rs.getString("cep"),
-                        rs.getString("endereco"),
-                        rs.getString("bairro"),
-                        rs.getString("curso"),
-                        rs.getInt("semestre"),
-                        rs.getString("turno"),
-                        rs.getString("instituicao"),
-                        rs.getString("telefone"),
-                        rs.getString("email"));
+        if (rs.next()) {
+            aluno = new Aluno(
+                    rs.getString("nome"), // nome de usuário
+                    rs.getString("senha"),
+                    rs.getString("nome_aluno"), // nome do aluno
+                    rs.getString("sobrenome_aluno"), // sobrenome do aluno
+                    rs.getString("cpf"),
+                    rs.getString("cep"),
+                    rs.getString("endereco"),
+                    rs.getString("bairro"),
+                    rs.getString("curso"),
+                    rs.getInt("semestre"),
+                    rs.getString("turno"),
+                    rs.getString("instituicao"),
+                    rs.getString("telefone"),
+                    rs.getString("email"));
 
-                try {
-                    aluno.setVaiParaAula(rs.getBoolean("vai_para_aula"));
-                } catch (SQLException e) {
-                    System.out.println("Aviso: Coluna vai_para_aula não encontrada, usando valor padrão false");
-                    aluno.setVaiParaAula(false);
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("ERRO ao pesquisar aluno por CPF: " + e.getMessage());
-        }
-        return aluno;
-    }
-
-    public List<Aluno> consultarAlunos() {
-        List<Aluno> lista = new ArrayList<>();
-        try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
-            conn = DriverManager.getConnection(url, user, pass);
-
-            String sql = "SELECT nome, senha, cpf, cep, endereco, bairro, curso, " +
-                    "semestre, turno, instituicao, telefone, email, vai_para_aula " +
-                    "FROM alunos";
-
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                Aluno aluno = new Aluno(
-                        rs.getString("nome"),
-                        rs.getString("senha"),
-                        rs.getString("cpf"),
-                        rs.getString("cep"),
-                        rs.getString("endereco"),
-                        rs.getString("bairro"),
-                        rs.getString("curso"),
-                        rs.getInt("semestre"),
-                        rs.getString("turno"),
-                        rs.getString("instituicao"),
-                        rs.getString("telefone"),
-                        rs.getString("email"));
-
+            try {
                 aluno.setVaiParaAula(rs.getBoolean("vai_para_aula"));
-
-                lista.add(aluno);
+            } catch (SQLException e) {
+                System.out.println("Aviso: Coluna vai_para_aula não encontrada, usando valor padrão false");
+                aluno.setVaiParaAula(false);
             }
-        } catch (Exception e) {
-            System.out.println("ERRO ao consultar alunos: " + e.getMessage());
         }
-        return lista;
+    } catch (Exception e) {
+        System.out.println("ERRO ao pesquisar aluno por CPF: " + e.getMessage());
     }
+    return aluno;
+}
+
+public List<Aluno> consultarAlunos() {
+    List<Aluno> lista = new ArrayList<>();
+    try {
+        String url = "jdbc:postgresql://localhost:5432/teste";
+        conn = DriverManager.getConnection(url, user, pass);
+
+        String sql = "SELECT nome, senha, nome_aluno, sobrenome_aluno, cpf, cep, endereco, bairro, curso, " +
+                "semestre, turno, instituicao, telefone, email, vai_para_aula " +
+                "FROM alunos";
+
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            Aluno aluno = new Aluno(
+                    rs.getString("nome"), // nome de usuário
+                    rs.getString("senha"),
+                    rs.getString("nome_aluno"), // nome do aluno
+                    rs.getString("sobrenome_aluno"), // sobrenome do aluno
+                    rs.getString("cpf"),
+                    rs.getString("cep"),
+                    rs.getString("endereco"),
+                    rs.getString("bairro"),
+                    rs.getString("curso"),
+                    rs.getInt("semestre"),
+                    rs.getString("turno"),
+                    rs.getString("instituicao"),
+                    rs.getString("telefone"),
+                    rs.getString("email"));
+
+            aluno.setVaiParaAula(rs.getBoolean("vai_para_aula"));
+
+            lista.add(aluno);
+        }
+    } catch (Exception e) {
+        System.out.println("ERRO ao consultar alunos: " + e.getMessage());
+    }
+    return lista;
+}
 
     public boolean atualizarPresencaAluno(String cpf, boolean vaiParaAula) {
         try {

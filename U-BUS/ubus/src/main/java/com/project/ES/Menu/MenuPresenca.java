@@ -63,7 +63,7 @@ public class MenuPresenca {
         return;
     }
 
-    DataBaseManager db = new DataBaseManager("", "");
+    DataBaseManager db = new DataBaseManager("postgres", "pombal10");
     db.conectar();
     
     
@@ -99,7 +99,7 @@ public class MenuPresenca {
                 
                 for (Aluno aluno : alunosDaInstituicao) {
                     System.out.printf("%-20s %-15s\n", 
-                        aluno.getNome(),
+                        aluno.getNome_Aluno(),
                         aluno.getTurno());
                 }
             }
@@ -120,7 +120,7 @@ private void marcarPresenca(Aluno aluno) {
     boolean vaiParaAula = resposta.equalsIgnoreCase("S");
     
     
-    DataBaseManager db = new DataBaseManager("", "");
+    DataBaseManager db = new DataBaseManager("postgres", "pombal10");
     db.conectar();
     boolean atualizado = db.atualizarPresencaAluno(aluno.getCpf(), vaiParaAula);
     
@@ -158,7 +158,7 @@ private void marcarPresenca(Aluno aluno) {
         }
     }
     public void atualizarListaPresenca() {
-    DataBaseManager db = new DataBaseManager("", "");
+    DataBaseManager db = new DataBaseManager("postgres", "pombal10");
     db.conectar();
     db.consultarAlunos(); 
 }
