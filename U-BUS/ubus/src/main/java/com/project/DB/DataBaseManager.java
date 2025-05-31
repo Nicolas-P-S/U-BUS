@@ -155,10 +155,10 @@ public void salvarAluno(Aluno aluno) {
                 ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement stmt = conn.prepareStatement(sql);
 
-        stmt.setString(1, aluno.getNome()); // nome de usuário
+        stmt.setString(1, aluno.getNome()); 
         stmt.setString(2, aluno.getSenha());
-        stmt.setString(3, aluno.getNome_Aluno()); // nome do aluno
-        stmt.setString(4, aluno.getSobrenome_Aluno()); // sobrenome do aluno
+        stmt.setString(3, aluno.getNome_Aluno()); 
+        stmt.setString(4, aluno.getSobrenome_Aluno()); 
         stmt.setString(5, aluno.getCpf());
         stmt.setString(6, aluno.getCep());
         stmt.setString(7, aluno.getEnderco());
@@ -302,10 +302,10 @@ public List<Aluno> consultarAlunos() {
 
         while (rs.next()) {
             Aluno aluno = new Aluno(
-                    rs.getString("nome"), // nome de usuário
+                    rs.getString("nome"), 
                     rs.getString("senha"),
-                    rs.getString("nome_aluno"), // nome do aluno
-                    rs.getString("sobrenome_aluno"), // sobrenome do aluno
+                    rs.getString("nome_aluno"), 
+                    rs.getString("sobrenome_aluno"), 
                     rs.getString("cpf"),
                     rs.getString("cep"),
                     rs.getString("endereco"),
