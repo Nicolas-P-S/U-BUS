@@ -3,7 +3,7 @@ import com.project.entity.Usuario;
 import com.project.DB.DataBaseManager;
 
 public class MenuCadatro extends MenuBase{
-    DataBaseManager db = new DataBaseManager("", "");
+    DataBaseManager db = new DataBaseManager(null, null);
 
     public void logoCadastro(){
         limparConsole();

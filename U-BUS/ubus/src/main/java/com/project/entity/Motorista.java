@@ -19,7 +19,7 @@ public class Motorista extends Usuario {
         this.endereco = endereco;
     }
 
-
+    public Motorista(){}
 
     public String getCpf() {
         return cpf;

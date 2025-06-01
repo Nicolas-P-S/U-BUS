@@ -2,19 +2,13 @@ package com.project.entity;
 
 public class Admin extends Usuario {
     private String email;
-    private String tipo;
     
-
-
-    public Admin(String nome, String senha, String email, String tipo) {
+    public Admin(String nome, String senha, String email) {
         super(nome, senha);
         this.email = email;
-        this.tipo = tipo;
     }
 
-    public Admin() {
-        
-    }
+    public Admin(){}
 
     public String getEmail() {
         return email;
@@ -24,19 +18,8 @@ public class Admin extends Usuario {
         this.email = email;
     }
 
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
     @Override
     public String toString() {
-        return "Admin [email=" + email + ", tipo=" + tipo + "]";
+        return "Admin [email=" + email + "]";
     }
-
-    
-    
 }

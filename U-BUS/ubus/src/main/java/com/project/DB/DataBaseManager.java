@@ -36,11 +36,11 @@ public class DataBaseManager {
         try {
             Statement stmt = conn.createStatement();
 
-            String verificacao = "SELECT 1 FROM pg_database WHERE datname = 'teste'";
+            String verificacao = "SELECT 1 FROM pg_database WHERE datname = 'ubus_data'";
             ResultSet rs = stmt.executeQuery(verificacao);
 
             if (!rs.next()) { // se o bd nao existir, cria
-                String nomeBanco = "teste";
+                String nomeBanco = "ubus_data";
                 String sql = "CREATE DATABASE " + nomeBanco;
                 stmt.executeUpdate(sql);
 
@@ -54,23 +54,22 @@ public class DataBaseManager {
 
     public void criarTabelas() {
         try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
+            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             conn = DriverManager.getConnection(url, user, pass);
-
             Statement stmt = conn.createStatement();
 
+            // Tabela de usuários base
             String sqlUsers = "CREATE TABLE IF NOT EXISTS users (" +
                     "id SERIAL PRIMARY KEY, " +
-                    "nome VARCHAR(100) NOT NULL, " +
-                    "senha VARCHAR(100) NOT NULL, " +
-                    "tipo VARCHAR(20) NOT NULL DEFAULT 'usuario'" +
+                    "nome VARCHAR(100) NOT NULL UNIQUE, " +
+                    "senha VARCHAR(100) NOT NULL" +
                     ")";
             stmt.executeUpdate(sqlUsers);
 
+            // Motorista
             String sqlMotoristas = "CREATE TABLE IF NOT EXISTS motorista (" +
                     "id SERIAL PRIMARY KEY, " +
-                    "nome VARCHAR(100) NOT NULL, " +
-                    "senha VARCHAR(100) NOT NULL, " +
+                    "user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE, " +
                     "cpf VARCHAR(14) UNIQUE NOT NULL, " +
                     "cnh VARCHAR(20) UNIQUE NOT NULL, " +
                     "categoria_cnh VARCHAR(2) NOT NULL, " +
@@ -80,19 +79,20 @@ public class DataBaseManager {
                     ")";
             stmt.executeUpdate(sqlMotoristas);
 
+            // Administrador
             String sqlAdmin = "CREATE TABLE IF NOT EXISTS admin (" +
                     "id SERIAL PRIMARY KEY, " +
-                    "nome VARCHAR(100) NOT NULL, " +
-                    "senha VARCHAR(100) NOT NULL, " +
-                    "email VARCHAR(100), " +
-                    "tipo VARCHAR(100)" +
+                    "user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE, " +
+                    "email VARCHAR(100)" +
                     ")";
             stmt.executeUpdate(sqlAdmin);
 
+            // Aluno
             String sqlAlunos = "CREATE TABLE IF NOT EXISTS alunos (" +
                     "id SERIAL PRIMARY KEY, " +
-                    "nome VARCHAR(100) NOT NULL, " +
-                    "senha VARCHAR(100) NOT NULL, " +
+                    "user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE, " +
+                    "nome_aluno VARCHAR(100) NOT NULL, " + 
+                    "sobrenome_aluno VARCHAR(100) NOT NULL, " +
                     "cpf VARCHAR(14) UNIQUE NOT NULL, " +
                     "cep VARCHAR(9) NOT NULL, " +
                     "endereco TEXT NOT NULL, " +
@@ -108,7 +108,7 @@ public class DataBaseManager {
                     ")";
             stmt.executeUpdate(sqlAlunos);
 
-            System.out.println("Tabelas verificadas/criadas com sucesso!");
+            System.out.println("Tabelas criadas/verificadas com sucesso!");
         } catch (Exception e) {
             System.out.println("ERRO ao criar tabelas: " + e.getMessage());
             e.printStackTrace();
@@ -124,64 +124,73 @@ public class DataBaseManager {
 
     public void salvarAdmin(Admin admin) {
         try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
+            int userId = salvarUsuario(new Usuario(admin.getNome(), admin.getSenha()));
+            if (userId == -1) {
+                System.out.println("ERRO: não foi possível criar o usuário base.");
+                return;
+            }
+
+            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             conn = DriverManager.getConnection(url, user, pass);
 
-            String sql = "INSERT INTO admin (nome, senha, email, tipo) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO admin (user_id, email) VALUES (?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, admin.getNome());
-            stmt.setString(2, admin.getSenha());
-            stmt.setString(3, admin.getEmail());
-            stmt.setString(4, admin.getTipo());
+            stmt.setInt(1, userId);
+            stmt.setString(2, admin.getEmail());
             stmt.executeUpdate();
 
-            salvarUsuario(new Usuario(admin.getNome(), admin.getSenha()));
-
         } catch (Exception e) {
-            System.out.println("ERRO ao salvar Adiministrador: " + e);
+            System.out.println("ERRO ao salvar Admin: " + e);
         }
     }
 
     public void salvarAluno(Aluno aluno) {
         try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
+            int userId = salvarUsuario(new Usuario(aluno.getNome(), aluno.getSenha()));
+            if (userId == -1) {
+                System.out.println("ERRO: não foi possível criar o usuário base do aluno.");
+                return;
+            }
+
+            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             conn = DriverManager.getConnection(url, user, pass);
 
             String sql = "INSERT INTO alunos (" +
-                    "nome, senha, cpf, cep, endereco, bairro, curso, " +
-                    "semestre, turno, instituicao, telefone, email, vai_para_aula" +
-                    ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        "user_id, nome_aluno, sobrenome_aluno, cpf, cep, endereco, bairro, curso, semestre, turno, instituicao, telefone, email" +
+                        ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
             PreparedStatement stmt = conn.prepareStatement(sql);
-
-            stmt.setString(1, aluno.getNome());
-            stmt.setString(2, aluno.getSenha());
-            stmt.setString(3, aluno.getCpf());
-            stmt.setString(4, aluno.getCep());
-            stmt.setString(5, aluno.getEnderco());
-            stmt.setString(6, aluno.getBairro());
-            stmt.setString(7, aluno.getCurso());
-            stmt.setInt(8, aluno.getSemestre());
-            stmt.setString(9, aluno.getTurno());
-            stmt.setString(10, aluno.getInstituicao());
-            stmt.setString(11, aluno.getTelefone());
-            stmt.setString(12, aluno.getEmail());
-            stmt.setBoolean(13, aluno.isVaiParaAula());
-
+            stmt.setInt(1, userId);
+            stmt.setString(2, aluno.getNome());
+            stmt.setString(3, aluno.getSobrenome_Aluno());
+            stmt.setString(4, aluno.getCpf());
+            stmt.setString(5, aluno.getCep());
+            stmt.setString(6, aluno.getEndereco());
+            stmt.setString(7, aluno.getBairro());
+            stmt.setString(8, aluno.getCurso());
+            stmt.setInt(9, aluno.getSemestre());
+            stmt.setString(10, aluno.getTurno());
+            stmt.setString(11, aluno.getInstituicao());
+            stmt.setString(12, aluno.getTelefone());
+            stmt.setString(13, aluno.getEmail());
             stmt.executeUpdate();
 
-            salvarUsuario(new Usuario(aluno.getNome(), aluno.getSenha()));
         } catch (Exception e) {
-            System.out.println("ERRO ao salvar aluno: " + e);
+            System.out.println("ERRO ao salvar aluno: " + e.getMessage());
         }
     }
+
 
     public Aluno buscarAluno(String nome, String senha) {
         Aluno aluno = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
+            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             conn = DriverManager.getConnection(url, user, pass);
 
-            String sql = "SELECT * FROM alunos WHERE nome = ? AND senha = ?";
+            String sql = "SELECT u.nome, u.senha, a.* " +
+                        "FROM users u " +
+                        "JOIN alunos a ON u.id = a.user_id " +
+                        "WHERE u.nome = ? AND u.senha = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, nome);
             stmt.setString(2, senha);
@@ -189,39 +198,40 @@ public class DataBaseManager {
 
             if (rs.next()) {
                 aluno = new Aluno(
-                        rs.getString("nome"),
-                        rs.getString("senha"),
-                        rs.getString("cpf"),
-                        rs.getString("cep"),
-                        rs.getString("endereco"),
-                        rs.getString("bairro"),
-                        rs.getString("curso"),
-                        rs.getInt("semestre"),
-                        rs.getString("turno"),
-                        rs.getString("instituicao"),
-                        rs.getString("telefone"),
-                        rs.getString("email"));
-
-                try {
-                    aluno.setVaiParaAula(rs.getBoolean("vai_para_aula"));
-                } catch (SQLException e) {
-                    System.out.println("Aviso: Coluna vai_para_aula não encontrada, usando valor padrão false");
-                    aluno.setVaiParaAula(false);
-                }
+                    rs.getString("nome"),
+                    rs.getString("senha"),
+                    rs.getString("nome_aluno"),
+                    rs.getString("sobrenome_aluno"),
+                    rs.getString("cpf"),
+                    rs.getString("cep"),
+                    rs.getString("endereco"),
+                    rs.getString("bairro"),
+                    rs.getString("curso"),
+                    rs.getInt("semestre"),
+                    rs.getString("turno"),
+                    rs.getString("instituicao"),
+                    rs.getString("telefone"),
+                    rs.getString("email")
+                );
             }
+
         } catch (Exception e) {
             System.out.println("ERRO ao buscar aluno: " + e.getMessage());
         }
         return aluno;
     }
 
+
     public Admin pesquisarAdminPorNome(String nome) {
         Admin admin = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
+            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             conn = DriverManager.getConnection(url, user, pass);
 
-            String sql = "SELECT * FROM admin WHERE nome = ?";
+            String sql = "SELECT u.id as user_id, u.nome, u.senha, a.email " +
+                        "FROM users u " +
+                        "JOIN admin a ON u.id = a.user_id " +
+                        "WHERE u.nome = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, nome);
             ResultSet rs = stmt.executeQuery();
@@ -230,8 +240,8 @@ public class DataBaseManager {
                 admin = new Admin(
                         rs.getString("nome"),
                         rs.getString("senha"),
-                        rs.getString("email"),
-                        rs.getString("tipo"));
+                        rs.getString("email")
+                );
             }
 
         } catch (Exception e) {
@@ -243,18 +253,26 @@ public class DataBaseManager {
     public Aluno pesquisarAlunoPorCpf(String cpf) {
         Aluno aluno = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
+            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             conn = DriverManager.getConnection(url, user, pass);
 
-            String sql = "SELECT * FROM alunos WHERE cpf = ?";
+            String sql = """
+                SELECT a.*, u.nome, u.senha
+                FROM alunos a
+                JOIN users u ON a.id = u.id
+                WHERE a.cpf = ?;
+                """;
+
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, cpf);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
                 aluno = new Aluno(
-                        rs.getString("nome"),
-                        rs.getString("senha"),
+                        rs.getString("nome"), // do users
+                        rs.getString("senha"),        // do users
+                        rs.getString("nome_aluno"),
+                        rs.getString("sobrenome_aluno"),
                         rs.getString("cpf"),
                         rs.getString("cep"),
                         rs.getString("endereco"),
@@ -279,47 +297,48 @@ public class DataBaseManager {
         return aluno;
     }
 
+
     public List<Aluno> consultarAlunos() {
-        List<Aluno> lista = new ArrayList<>();
+        List<Aluno> alunos = new ArrayList<>();
         try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
+            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             conn = DriverManager.getConnection(url, user, pass);
 
-            String sql = "SELECT nome, senha, cpf, cep, endereco, bairro, curso, " +
-                    "semestre, turno, instituicao, telefone, email, vai_para_aula " +
-                    "FROM alunos";
-
+            String sql = "SELECT u.nome, u.senha, a.* FROM users u " +
+                        "JOIN alunos a ON u.id = a.user_id";
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
                 Aluno aluno = new Aluno(
-                        rs.getString("nome"),
-                        rs.getString("senha"),
-                        rs.getString("cpf"),
-                        rs.getString("cep"),
-                        rs.getString("endereco"),
-                        rs.getString("bairro"),
-                        rs.getString("curso"),
-                        rs.getInt("semestre"),
-                        rs.getString("turno"),
-                        rs.getString("instituicao"),
-                        rs.getString("telefone"),
-                        rs.getString("email"));
-
-                aluno.setVaiParaAula(rs.getBoolean("vai_para_aula"));
-
-                lista.add(aluno);
+                    rs.getString("nome"),
+                    rs.getString("senha"),
+                    rs.getString("nome_aluno"),
+                    rs.getString("sobrenome_aluno"),
+                    rs.getString("cpf"),
+                    rs.getString("cep"),
+                    rs.getString("endereco"),
+                    rs.getString("bairro"),
+                    rs.getString("curso"),
+                    rs.getInt("semestre"),
+                    rs.getString("turno"),
+                    rs.getString("instituicao"),
+                    rs.getString("telefone"),
+                    rs.getString("email")
+                );
+                alunos.add(aluno);
             }
+
         } catch (Exception e) {
             System.out.println("ERRO ao consultar alunos: " + e.getMessage());
         }
-        return lista;
+        return alunos;
     }
+
 
     public boolean atualizarPresencaAluno(String cpf, boolean vaiParaAula) {
         try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
+            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             conn = DriverManager.getConnection(url, user, pass);
 
             String verifica = "SELECT 1 FROM alunos WHERE cpf = ?";
@@ -354,34 +373,76 @@ public class DataBaseManager {
 
     public void salvarMotorista(Motorista motorista) {
         try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
+            int userId = salvarUsuario(new Usuario(motorista.getNome(), motorista.getSenha()));
+            if (userId == -1) {
+                System.out.println("ERRO: não foi possível criar o usuário base do motorista.");
+                return;
+            }
+
+            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             conn = DriverManager.getConnection(url, user, pass);
 
-            String sql = "INSERT INTO motorista (nome, senha, cpf, cnh, categoria_cnh, telefone, email, endereco) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO motorista (user_id, cpf, cnh, categoria_cnh, telefone, email, endereco) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
-
-            stmt.setString(1, motorista.getNome());
-            stmt.setString(2, motorista.getSenha());
-            stmt.setString(3, motorista.getCpf());
-            stmt.setString(4, motorista.getCnh());
-            stmt.setString(5, motorista.getCategoriaCNH());
-            stmt.setString(6, motorista.getTelefone());
-            stmt.setString(7, motorista.getEmail());
-            stmt.setString(8, motorista.getEndereco());
-
+            stmt.setInt(1, userId);
+            stmt.setString(2, motorista.getCpf());
+            stmt.setString(3, motorista.getCnh());
+            stmt.setString(4, motorista.getCategoriaCNH());
+            stmt.setString(5, motorista.getTelefone());
+            stmt.setString(6, motorista.getEmail());
+            stmt.setString(7, motorista.getEndereco());
             stmt.executeUpdate();
+
         } catch (Exception e) {
-            System.out.println("ERRO ao salvar motorista: " + e);
+            System.out.println("ERRO ao salvar motorista: " + e.getMessage());
         }
+    }
+
+    public Motorista buscarMotorista(String nome, String senha) {
+        Motorista motorista = null;
+        try {
+            String url = "jdbc:postgresql://localhost:5432/ubus_data";
+            conn = DriverManager.getConnection(url, user, pass);
+
+            String sql = "SELECT u.nome, u.senha, m.* " +
+                        "FROM users u " +
+                        "JOIN motorista m ON u.id = m.user_id " +
+                        "WHERE u.nome = ? AND u.senha = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, nome);
+            stmt.setString(2, senha);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                motorista = new Motorista(
+                    rs.getString("nome"),
+                    rs.getString("senha"),
+                    rs.getString("cpf"),
+                    rs.getString("cnh"),
+                    rs.getString("categoria_cnh"),
+                    rs.getString("telefone"),
+                    rs.getString("email"),
+                    rs.getString("endereco")
+                );
+            }
+
+        } catch (Exception e) {
+            System.out.println("ERRO ao buscar motorista: " + e.getMessage());
+        }
+        return motorista;
     }
 
     public Admin buscarAdmin(String nome, String senha) {
         Admin admin = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
+            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             conn = DriverManager.getConnection(url, user, pass);
 
-            String sql = "SELECT * FROM admin WHERE nome = ? AND senha = ?";
+            String sql = "SELECT u.id as user_id, u.nome, u.senha, a.email " +
+                        "FROM users u " +
+                        "JOIN admin a ON u.id = a.user_id " +
+                        "WHERE u.nome = ? AND u.senha = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, nome);
             stmt.setString(2, senha);
@@ -392,34 +453,41 @@ public class DataBaseManager {
                 admin.setNome(rs.getString("nome"));
                 admin.setSenha(rs.getString("senha"));
                 admin.setEmail(rs.getString("email"));
-                admin.setTipo(rs.getString("tipo"));
             }
+
         } catch (Exception e) {
             System.out.println("ERRO ao buscar admin: " + e.getMessage());
         }
         return admin;
     }
 
+
     public List<Motorista> consultarMotoristas() {
         List<Motorista> lista = new ArrayList<>();
         try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
+            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             conn = DriverManager.getConnection(url, user, pass);
 
-            String sql = "SELECT * FROM motorista";
+            String sql = """
+                SELECT m.*, u.nome, u.senha
+                FROM motorista m
+                JOIN users u ON m.user_id = u.id
+            """;
+
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
                 Motorista m = new Motorista(
-                        rs.getString("nome"),
-                        rs.getString("senha"),
+                        rs.getString("nome"), // nome de login (users)
+                        rs.getString("senha"),        // senha (users)
                         rs.getString("cpf"),
                         rs.getString("cnh"),
                         rs.getString("categoria_cnh"),
                         rs.getString("telefone"),
                         rs.getString("email"),
-                        rs.getString("endereco"));
+                        rs.getString("endereco")
+                );
                 lista.add(m);
             }
         } catch (Exception e) {
@@ -428,27 +496,33 @@ public class DataBaseManager {
         return lista;
     }
 
-    public void salvarUsuario(Usuario usuario) {
+
+    public int salvarUsuario(Usuario usuario) {
+        int userId = -1;
         try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
+            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             conn = DriverManager.getConnection(url, user, pass);
 
-            String sql = "INSERT INTO users (nome, senha) VALUES (?, ?)";
+            String sql = "INSERT INTO users (nome, senha) VALUES (?, ?) RETURNING id";
             PreparedStatement stmt = conn.prepareStatement(sql);
-
             stmt.setString(1, usuario.getNome());
             stmt.setString(2, usuario.getSenha());
 
-            stmt.executeUpdate();
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                userId = rs.getInt("id");
+            }
         } catch (Exception e) {
-            System.out.println("ERRO: " + e);
+            System.out.println("ERRO ao salvar usuário: " + e);
         }
+        return userId;
     }
+
 
     public Usuario pesquisarUsuarioNome(String nome) {
         Usuario usuario = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
+            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             conn = DriverManager.getConnection(url, user, pass);
 
             String sql = "SELECT * FROM users WHERE nome = ?";
@@ -469,7 +543,7 @@ public class DataBaseManager {
     public Usuario pesquisarUsuarioSenha(String senha) {
         Usuario usuario = null;
         try {
-            String url = "jdbc:postgresql://localhost:5432/teste";
+            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             conn = DriverManager.getConnection(url, user, pass);
 
             String sql = "SELECT * FROM users WHERE senha = ?";

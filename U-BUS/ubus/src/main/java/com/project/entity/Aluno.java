@@ -1,9 +1,11 @@
 package com.project.entity;
 
 public class Aluno extends Usuario {
+    private String nome_Aluno;
+    private String sobrenome_Aluno;
     private String cpf;                
     private String cep; 
-    private String enderco;
+    private String endereco;
     private String bairro;
     private String curso;
     private int semestre;
@@ -12,16 +14,15 @@ public class Aluno extends Usuario {
     private String telefone;           
     private String email;
     private boolean vaiParaAula;
-    
-    
 
-
-    public Aluno(String nome, String senha, String cpf, String cep, String enderco, String bairro, String curso,
+    public Aluno(String nome, String senha, String nome_Aluno, String sobrenome_Aluno, String cpf, String cep, String endereco, String bairro, String curso,
             int semestre, String turno, String instituicao, String telefone, String email) {
         super(nome, senha);
+        this.nome_Aluno = nome_Aluno;
+        this.sobrenome_Aluno = sobrenome_Aluno;
         this.cpf = cpf;
         this.cep = cep;
-        this.enderco = enderco;
+        this.endereco = endereco;
         this.bairro = bairro;
         this.curso = curso;
         this.semestre = semestre;
@@ -30,8 +31,18 @@ public class Aluno extends Usuario {
         this.telefone = telefone;
         this.email = email;
     }
-    public Aluno() {
-        
+
+    public String getNome_Aluno() {
+        return nome_Aluno;
+    }
+    public void setNome_Aluno(String nome_Aluno) {
+        this.nome_Aluno = nome_Aluno;
+    }
+    public String getSobrenome_Aluno() {
+        return sobrenome_Aluno;
+    }
+    public void setSobrenome_Aluno(String sobrenome_Aluno) {
+        this.sobrenome_Aluno = sobrenome_Aluno;
     }
     public String getCpf() {
         return cpf;
@@ -45,11 +56,11 @@ public class Aluno extends Usuario {
     public void setCep(String cep) {
         this.cep = cep;
     }
-    public String getEnderco() {
-        return enderco;
+    public String getEndereco() {
+        return endereco;
     }
-    public void setEnderco(String enderco) {
-        this.enderco = enderco;
+    public void setEnderco(String endereco) {
+        this.endereco = endereco;
     }
     public String getBairro() {
         return bairro;
@@ -101,15 +112,13 @@ public class Aluno extends Usuario {
         this.vaiParaAula = vaiParaAula;
     }
     
-    
-    
     @Override
     public String toString() {
         return "Aluno {\n" +
-            "  nome='" + getNome() + "',\n" + 
+            "  nome='" + getNome_Aluno() + " " + getSobrenome_Aluno() + "',\n" + 
             "  cpf='" + cpf + "',\n" +
             "  cep='" + cep + "',\n" +
-            "  enderco='" + enderco + "',\n" +
+            "  enderco='" + endereco + "',\n" +
             "  bairro='" + bairro + "',\n" +
             "  curso='" + curso + "',\n" +
             "  semestre='" + semestre + "',\n" +
@@ -118,11 +127,5 @@ public class Aluno extends Usuario {
             "  telefone='" + telefone + "',\n" +
             "  email='" + email + "'\n" +
             "}";
-    }
-    
-
-
-
-    
-    
+    }   
 }
