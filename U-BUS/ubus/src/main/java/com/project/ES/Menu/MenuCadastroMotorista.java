@@ -31,9 +31,7 @@ public class MenuCadastroMotorista extends MenuBase {
         boolean valido = false;
 
         while (!valido) {
-            System.out.print(campo + ": ");
             input = es.entradaString().trim();
-
             if (input.length() < min || input.length() > max) {
                 System.out.println("O campo \"" + campo + "\" deve ter entre " + min + " e " + max + " caracteres.\n");
                 continue;

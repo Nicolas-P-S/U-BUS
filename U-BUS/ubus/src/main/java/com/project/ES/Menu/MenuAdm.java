@@ -70,7 +70,6 @@ public class MenuAdm extends MenuBase {
                     DataBaseManager bd = new DataBaseManager("postgres", "password");
                     bd.conectar(); 
                     bd.salvarAdmin(admin); 
-                    System.out.println("Administrador cadastrado com sucesso!");
                     pausarConsole();
                     limparConsole();
                     break;

@@ -70,7 +70,6 @@ public class MenuCadastroAluno extends MenuBase {
         boolean valido = false;
 
         while (!valido) {
-            System.out.print(campo + ": ");
             input = es.entradaString().trim();
 
             if (input.length() < min || input.length() > max) {
