@@ -1,10 +1,9 @@
 package com.project.ES.Menu;
-import com.project.DB.DataBaseManager;
 import com.project.entity.Usuario;
+import com.project.entity.Admin;
 
-public class MenuLogin extends MenuBase{
-    DataBaseManager db = new DataBaseManager(null, null);
-    
+
+public class MenuLogin extends MenuBase{    
     public void logoLogin(){
         limparConsole();
         System.out.println("""
@@ -57,13 +56,13 @@ public class MenuLogin extends MenuBase{
         return usuario.getSenha();
     }
 
-    public Usuario inicoLogin(){
+    public Admin inicoLogin(){
         logoLogin();
         String name = inserirUser();
         logoLogin();
-        String password = inserirPass();
+        inserirPass();
         
-        Usuario usuario = new Usuario(name, password);
+        Admin usuario = db.pesquisarAdminPorNome(name);
         return usuario;
     }
 }

@@ -1,8 +1,10 @@
 package com.project.ES.Menu;
 import com.project.ES.ES;
+import com.project.DB.DataBaseManager;
 
 public class MenuBase {
-    ES es = new ES();
+    public DataBaseManager db = new DataBaseManager(null, null);
+    public ES es = new ES();
     public void limparConsole(){
         try {
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();

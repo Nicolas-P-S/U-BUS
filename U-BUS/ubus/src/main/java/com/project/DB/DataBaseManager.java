@@ -145,21 +145,22 @@ public class DataBaseManager {
     }
 
     public void salvarAluno(Aluno aluno) {
-        try {
-            int userId = salvarUsuario(new Usuario(aluno.getNome(), aluno.getSenha()));
-            if (userId == -1) {
-                System.out.println("ERRO: não foi possível criar o usuário base do aluno.");
-                return;
-            }
+        int userId = salvarUsuario(new Usuario(aluno.getNome(), aluno.getSenha()));
+        if (userId == -1) {
+            System.out.println("ERRO: não foi possível criar o usuário base do aluno.");
+            return;
+        }
 
-            String url = "jdbc:postgresql://localhost:5432/ubus_data";
-            conn = DriverManager.getConnection(url, user, pass);
+        String url = "jdbc:postgresql://localhost:5432/ubus_data";
 
-            String sql = "INSERT INTO alunos (" +
-                        "user_id, nome_aluno, sobrenome_aluno, cpf, cep, endereco, bairro, curso, semestre, turno, instituicao, telefone, email" +
-                        ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO alunos (" +
+                    "user_id, nome_aluno, sobrenome_aluno, cpf, cep, endereco, bairro, curso, semestre, turno, instituicao, telefone, email" +
+                    ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        try (
+            Connection conn = DriverManager.getConnection(url, user, pass);
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
             stmt.setInt(1, userId);
             stmt.setString(2, aluno.getNome());
             stmt.setString(3, aluno.getSobrenome_Aluno());
@@ -173,12 +174,13 @@ public class DataBaseManager {
             stmt.setString(11, aluno.getInstituicao());
             stmt.setString(12, aluno.getTelefone());
             stmt.setString(13, aluno.getEmail());
-            stmt.executeUpdate();
 
+            stmt.executeUpdate();
         } catch (Exception e) {
             System.out.println("ERRO ao salvar aluno: " + e.getMessage());
         }
     }
+
 
 
     public Aluno buscarAluno(String nome, String senha) {
