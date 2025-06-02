@@ -21,7 +21,7 @@ public class MenuLogin extends MenuBase{
             System.out.println("(1/2) Usuario: ");
             resposta = es.entradaString();
 
-            usuario = db.pesquisarUsuarioNome(resposta);
+            usuario = uDB.pesquisarUsuarioNome(resposta);
             if (usuario != null)
                 continuar = true;
             else{
@@ -43,7 +43,7 @@ public class MenuLogin extends MenuBase{
             System.out.println("(2/2) Senha: ");
             resposta = es.entradaString();
 
-            usuario = db.pesquisarUsuarioSenha(resposta);
+            usuario = uDB.pesquisarUsuarioSenha(resposta);
             if (usuario != null)
                 continuar = true;
             else{
@@ -62,7 +62,7 @@ public class MenuLogin extends MenuBase{
         logoLogin();
         inserirPass();
         
-        Admin usuario = db.pesquisarAdminPorNome(name);
+        Admin usuario = adDB.pesquisarAdminPorNome(name);
         return usuario;
     }
 }

@@ -17,12 +17,12 @@ public class Lista extends MenuBase{
 
     public void adicionarAlunos(){
         alunos.clear();
-        alunos = db.consultarAlunos();
+        alunos = alDB.consultarAlunos();
     }
 
     public void adicionarMotorista(){
         motoristas.clear();
-        motoristas = db.consultarMotoristas();
+        motoristas = mDB.consultarMotoristas();
     }
 
     public void divirAlunosPorInstituicao(){

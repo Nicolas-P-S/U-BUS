@@ -48,7 +48,7 @@ public class MenuPrincipal extends MenuBase {
                         MenuCadastroAdm cadastro = new MenuCadastroAdm();
                         Admin usuario = cadastro.cadastrarAdm();
                         
-                        db.salvarAdmin(usuario);
+                        adDB.salvarAdmin(usuario);
                         System.out.println("\nUsuario cadastrado com sucesso!");
                         pausarConsole();
                     }
@@ -87,7 +87,7 @@ public class MenuPrincipal extends MenuBase {
                             MenuCadastroMotorista menuMotorista = new MenuCadastroMotorista();
                             Motorista motorista = menuMotorista.cadastrarMotorista();
                             
-                            db.salvarMotorista(motorista);
+                            mDB.salvarMotorista(motorista);
                             System.out.println("\nMotorista cadastrado com sucesso!");
                         } else {
                             System.out.println("\nApenas administradores podem cadastrar motoristas.");
@@ -97,7 +97,7 @@ public class MenuPrincipal extends MenuBase {
                     case 2 -> {
                         if (usuarioLogado instanceof Admin) {
                             
-                            List<Motorista> motoristas = db.consultarMotoristas();
+                            List<Motorista> motoristas = mDB.consultarMotoristas();
                             System.out.println("\n--- Lista de Motoristas ---\n");
                             if (motoristas.isEmpty()) {
                                 System.out.println("Nenhum motorista cadastrado.");
@@ -113,14 +113,14 @@ public class MenuPrincipal extends MenuBase {
                         MenuCadastroAluno menuAluno = new MenuCadastroAluno();
                         Aluno aluno = menuAluno.cadastrarAluno();
                         
-                        db.salvarAluno(aluno);
+                        alDB.salvarAluno(aluno);
                         System.out.println("\nAluno cadastrado com sucesso!");
                         pausarConsole();
                     }
                     case 4 -> {
                         if (usuarioLogado instanceof Admin) {
 
-                            List<Aluno> alunos = db.consultarAlunos();
+                            List<Aluno> alunos = alDB.consultarAlunos();
                             System.out.println("\n--- Lista de Alunos ---\n");
 
                             if (alunos.isEmpty()) {

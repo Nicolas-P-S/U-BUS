@@ -56,7 +56,7 @@ public class MenuGerarAlunos extends MenuBase{
         for (int i = 0; i < quantidade; i++){
             Aluno aluno = new Aluno();
             aluno.gerarInfos();
-            db.salvarAluno(aluno);
+            alDB.salvarAluno(aluno);
         }
     }
 }

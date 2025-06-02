@@ -22,7 +22,7 @@ public class MenuCadastro extends MenuBase {
             System.out.println("╚════════════════════════╝");
             resposta = this.es.entradaString();
 
-            if ((resposta.length() >= 4 && resposta.length() <= 20) && (db.pesquisarUsuarioNome(resposta) == null)) {
+            if ((resposta.length() >= 4 && resposta.length() <= 20) && (uDB.pesquisarUsuarioNome(resposta) == null)) {
                 continuar = true;
             } else {
                 limparConsole();
