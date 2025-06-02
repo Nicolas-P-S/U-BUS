@@ -8,6 +8,8 @@ import com.project.entity.Admin;
 import com.project.entity.Aluno;
 import com.project.entity.Motorista;
 import com.project.entity.Usuario;
+import com.project.entity.MementoInterator.Lista;
+
 import java.util.List;
 
 public class MenuPrincipal extends MenuBase {
@@ -19,6 +21,7 @@ public class MenuPrincipal extends MenuBase {
         boolean continuar = false;
         ES es = new ES();
         Usuario usuarioLogado = null;
+        Lista lista = new Lista();
 
         while (!continuar) {
             limparConsole();
@@ -85,6 +88,7 @@ public class MenuPrincipal extends MenuBase {
                             Motorista motorista = menuMotorista.cadastrarMotorista();
                             
                             db.salvarMotorista(motorista);
+                            lista.adicionarMotorista(motorista);
                             System.out.println("\nMotorista cadastrado com sucesso!");
                         } else {
                             System.out.println("\nApenas administradores podem cadastrar motoristas.");
@@ -131,14 +135,16 @@ public class MenuPrincipal extends MenuBase {
                     }
                     case 5 -> {
                         if (usuarioLogado instanceof Admin) {
-                            // ver LISTA
+                            lista.imprimirLista();
                         } else {
                             System.out.println("\nApenas administradores podem ver a lista de presença.");
                         }
                         pausarConsole();
                     }
                     case 6 -> {
-                        
+                        lista.adicionarAlunos();
+                        lista.divirAlunosPorInstituicao();
+                        lista.gerarLista();
                     }
                     case 7 -> {
                         if (usuarioLogado instanceof Admin) {
