@@ -1,64 +1,76 @@
 package com.project.ES.Menu;
 
-import com.project.DB.DataBaseManager;
-import com.project.entity.Admin;
-import com.project.entity.Aluno;
 import com.project.entity.Usuario;
-import com.project.ES.ES;
+import com.project.entity.Admin;
 
-public class MenuLogin extends MenuBase {
-    private DataBaseManager db = new DataBaseManager("postgres", "pombal10");
-    private ES es = new ES();
-    
+public class MenuLogin extends MenuBase {    
     public void logoLogin() {
         limparConsole();
-        System.out.println("""
-            --------- Entre com a sua conta! ---------
-            """);
+        System.out.println("╔════════════════════════╗");
+        System.out.println("║      MENU DE LOGIN     ║");
+        System.out.println("╚════════════════════════╝");
+        System.out.println();
     }
 
-    public Usuario inicoLogin() {
+    public String inserirUser() {
+        boolean continuar = false;
+        String resposta = "";
+        Usuario usuario = null;
+
+        while (!continuar) {
+            System.out.println("╔═════════════════════════╗");
+            System.out.println("║ (1/2) Digite o usuario: ║");
+            System.out.println("╚═════════════════════════╝");
+            resposta = es.entradaString();
+
+            usuario = db.pesquisarUsuarioNome(resposta);
+            if (usuario != null) {
+                continuar = true;
+            } else {
+                limparConsole();
+                System.out.println("╔═══════════════════════════════╗");
+                System.out.println("║ ERRO: Usuario nao cadastrado! ║");
+                System.out.println("╚═══════════════════════════════╝");
+                pausarConsole();
+                limparConsole();
+            }
+        }
+        return usuario.getNome();
+    }
+
+    public String inserirPass() {
+        boolean continuar = false;
+        String resposta = "";
+        Usuario usuario = null;
+
+        while (!continuar) {
+            System.out.println("╔═══════════════════════╗");
+            System.out.println("║ (2/2) Digite a senha: ║");
+            System.out.println("╚═══════════════════════╝");
+            resposta = es.entradaString();
+
+            usuario = db.pesquisarUsuarioSenha(resposta);
+            if (usuario != null) {
+                continuar = true;
+            } else {
+                limparConsole();
+                System.out.println("╔════════════════════════╗");
+                System.out.println("║ ERRO: Senha incorreta! ║");
+                System.out.println("╚════════════════════════╝");
+                pausarConsole();
+                limparConsole();
+            }
+        }
+        return usuario.getSenha();
+    }
+
+    public Admin inicioLogin() {
         logoLogin();
-        
-        // Primeiro obtém o nome de usuário
-        System.out.print("(1/2) Usuário: ");
-        String username = es.entradaString();
-        
-        // Verifica se o usuário existe
-        Usuario usuario = db.pesquisarUsuarioNome(username);
-        if (usuario == null) {
-            System.out.println("ERRO: Usuário não cadastrado!");
-            pausarConsole();
-            return null;
-        }
-
+        String name = inserirUser();
         logoLogin();
-        System.out.print("(2/2) Senha: ");
-        String password = es.entradaString();
-
-        // Verifica primeiro se é admin
-        Admin admin = db.buscarAdmin(username, password);
-        if (admin != null) {
-            System.out.println("Login como administrador realizado com sucesso!");
-            return admin;
-        }
-
-        // Verifica se é aluno
-        Aluno aluno = db.buscarAluno(username, password);
-        if (aluno != null) {
-            System.out.println("Login como aluno realizado com sucesso!");
-            return aluno;
-        }
-
-        // Verifica usuário comum
-        usuario = db.pesquisarUsuarioNome(username);
-        if (usuario != null && usuario.getSenha().equals(password)) {
-            System.out.println("Login como usuário comum realizado com sucesso!");
-            return usuario;
-        }
-
-        System.out.println("ERRO: Senha incorreta!");
-        pausarConsole();
-        return null;
+        inserirPass();
+        
+        Admin usuario = db.pesquisarAdminPorNome(name);
+        return usuario;
     }
 }
