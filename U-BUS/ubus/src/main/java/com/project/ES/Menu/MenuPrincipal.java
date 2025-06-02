@@ -41,7 +41,7 @@ public class MenuPrincipal extends MenuBase {
 
                 switch (es.entradaInt(1, 3)) {
                     case 1 -> {
-                        MenuCadatro cadastro = new MenuCadatro();
+                        MenuCadastro cadastro = new MenuCadastro();
                         Usuario usuario = cadastro.inicioCadastro();
                         DataBaseManager db = new DataBaseManager("postgres", "1234");
                         db.conectar();

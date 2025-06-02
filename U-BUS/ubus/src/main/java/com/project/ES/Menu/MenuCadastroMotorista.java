@@ -11,7 +11,7 @@ public class MenuCadastroMotorista extends MenuBase {
         limparConsole();
         System.out.println("----- CADASTRO DO MOTORISTA -----\n");
 
-        MenuCadatro cadastroBasico = new MenuCadatro();
+        MenuCadastro cadastroBasico = new MenuCadastro();
         Usuario usuario = cadastroBasico.inicioCadastro();
         String nome = usuario.getNome();
         String senha = usuario.getSenha();

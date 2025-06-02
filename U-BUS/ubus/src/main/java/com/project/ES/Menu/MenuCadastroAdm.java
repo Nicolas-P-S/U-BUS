@@ -12,7 +12,7 @@ public class MenuCadastroAdm extends MenuBase {
         limparConsole();
         System.out.println("----- Adiministrador -----\n");
 
-        MenuCadatro  cadastroadministrador = new MenuCadatro();
+        MenuCadastro  cadastroadministrador = new MenuCadastro();
         Usuario usuario = cadastroadministrador.inicioCadastro();
         String nome = usuario.getNome();
         String senha = usuario.getSenha();

@@ -11,7 +11,7 @@ public class MenuCadastroAluno extends MenuBase {
         limparConsole();
         System.out.println("----- CADASTRO DO ALUNO -----\n");
 
-        MenuCadatro cadastroBasico = new MenuCadatro();
+        MenuCadastro cadastroBasico = new MenuCadastro();
         Usuario usuario = cadastroBasico.inicioCadastro();
         String nome = usuario.getNome();
         String senha = usuario.getSenha();
