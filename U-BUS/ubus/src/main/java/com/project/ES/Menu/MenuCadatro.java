@@ -1,34 +1,41 @@
 package com.project.ES.Menu;
+
 import com.project.entity.Usuario;
 import com.project.DB.DataBaseManager;
 
-public class MenuCadatro extends MenuBase{
-    DataBaseManager db = new DataBaseManager("postgres", "pombal10");
+public class MenuCadatro extends MenuBase {
+    DataBaseManager db = new DataBaseManager("postgres", "1234");
 
-    public void logoCadastro(){
+    public void logoCadastro() {
         limparConsole();
-        System.out.println("""
----------CADASTRE-SE---------
-
-                """);
+        System.out.println("╔══════════════════════════════════╗");
+        System.out.println("║         MENU DE CADASTRO         ║");
+        System.out.println("╚══════════════════════════════════╝");
+        System.out.println();
     }
 
-    public String criarUser(){
+    public String criarUser() {
         boolean continuar = false;
         String resposta = "";
 
-        while (!continuar){
-            System.out.println("(1/2) Crie um usuario: ");
+        while (!continuar) {
+            System.out.println("╔════════════════════════╗");
+            System.out.println("║ (1/2) Crie um usuario: ║");
+            System.out.println("╚════════════════════════╝");
             resposta = this.es.entradaString();
 
-            if ((resposta.length() >= 4 && resposta.length() <= 20) && (db.pesquisarUsuarioNome(resposta) == null))
-                continuar=true;
-            else{
+            if ((resposta.length() >= 4 && resposta.length() <= 20) && (db.pesquisarUsuarioNome(resposta) == null)) {
+                continuar = true;
+            } else {
                 limparConsole();
-                if (resposta.length() < 4 || resposta.length() > 20)
-                    System.out.println("ERRO: digite um usuario entre 4 a 20 caracteres ou usuario!");
-                else
-                    System.out.println("ERRO: usuario já cadastrado!");
+                System.out.println("╔══════════════════════════════════════╗");
+                if (resposta.length() < 4 || resposta.length() > 20) {
+                    System.out.println("║ ERRO: Digite um usuario entre 4 a 20 ║");
+                    System.out.println("║ caracteres.                          ║");
+                } else {
+                    System.out.println("║ ERRO: Usuario ja cadastrado!         ║");
+                }
+                System.out.println("╚══════════════════════════════════════╝");
                 pausarConsole();
                 limparConsole();
             }
@@ -36,19 +43,24 @@ public class MenuCadatro extends MenuBase{
         return resposta;
     }
 
-    public String criarPass(){
+    public String criarPass() {
         boolean continuar = false;
         String resposta = "";
-        
-        while (!continuar){
-            System.out.println("(2/2) Crie uma senha: ");
+
+        while (!continuar) {
+            System.out.println("╔═══════════════════════╗");
+            System.out.println("║ (2/2) Crie uma senha: ║");
+            System.out.println("╚═══════════════════════╝");
             resposta = this.es.entradaString();
 
-            if (resposta.length() >= 8 && resposta.length() <= 20) // requisito min e max de caracteres
-                continuar=true; // sai do loop
-            else{
+            if (resposta.length() >= 8 && resposta.length() <= 20) {
+                continuar = true;
+            } else {
                 limparConsole();
-                System.out.println("ERRO: digite uma senha entre 8 a 20 caracteres");
+                System.out.println("╔══════════════════════════════════════╗");
+                System.out.println("║ ERRO: Digite uma senha entre 8 a 20  ║");
+                System.out.println("║ caracteres.                          ║");
+                System.out.println("╚══════════════════════════════════════╝");
                 pausarConsole();
                 limparConsole();
             }
@@ -56,13 +68,18 @@ public class MenuCadatro extends MenuBase{
         return resposta;
     }
 
-    public Usuario inicioCadastro(){ // metodo inicial para cadastro
+    public Usuario inicioCadastro() {
         logoCadastro();
         String user = criarUser();
         logoCadastro();
         String password = criarPass();
         Usuario usuario = new Usuario(user, password);
-        
+
+        System.out.println();
+        System.out.println("╔═════════════════════════════════╗");
+        System.out.println("║ Cadastro realizado com sucesso! ║");
+        System.out.println("╚═════════════════════════════════╝");
+
         return usuario;
     }
 }
