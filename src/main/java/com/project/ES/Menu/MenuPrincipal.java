@@ -88,7 +88,6 @@ public class MenuPrincipal extends MenuBase {
                             Motorista motorista = menuMotorista.cadastrarMotorista();
                             
                             db.salvarMotorista(motorista);
-                            lista.adicionarMotorista(motorista);
                             System.out.println("\nMotorista cadastrado com sucesso!");
                         } else {
                             System.out.println("\nApenas administradores podem cadastrar motoristas.");
@@ -120,19 +119,35 @@ public class MenuPrincipal extends MenuBase {
                     }
                     case 4 -> {
                         if (usuarioLogado instanceof Admin) {
-                            
+
                             List<Aluno> alunos = db.consultarAlunos();
                             System.out.println("\n--- Lista de Alunos ---\n");
+
                             if (alunos.isEmpty()) {
                                 System.out.println("Nenhum aluno cadastrado.");
                             } else {
-                                alunos.forEach(System.out::println);
+                                int contador = 1;
+                                for (Aluno aluno : alunos) {
+                                    System.out.printf(
+                                        "%d. %s %s\n" +
+                                        "   Instituição: %s | Curso: %s (%dº semestre) | Turno: %s\n" +
+                                        "   CPF: %s | Email: %s | Tel: %s\n" +
+                                        "   Endereço: %s, Bairro %s, CEP: %s\n\n",
+                                        contador++,
+                                        aluno.getNome_Aluno(), aluno.getSobrenome_Aluno(),
+                                        aluno.getInstituicao(), aluno.getCurso(), aluno.getSemestre(), aluno.getTurno(),
+                                        aluno.getCpf(), aluno.getEmail(), aluno.getTelefone(),
+                                        aluno.getEndereco(), aluno.getBairro(), aluno.getCep()
+                                    );
+                                }
                             }
+
                         } else {
                             System.out.println("\nApenas administradores podem consultar alunos.");
                         }
                         pausarConsole();
                     }
+
                     case 5 -> {
                         if (usuarioLogado instanceof Admin) {
                             lista.imprimirLista();
@@ -143,6 +158,7 @@ public class MenuPrincipal extends MenuBase {
                     }
                     case 6 -> {
                         lista.adicionarAlunos();
+                        lista.adicionarMotorista();
                         lista.divirAlunosPorInstituicao();
                         lista.gerarLista();
                     }

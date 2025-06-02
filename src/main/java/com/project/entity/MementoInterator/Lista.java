@@ -16,14 +16,17 @@ public class Lista extends MenuBase{
     final private int vagasOnibus = 51;
 
     public void adicionarAlunos(){
+        alunos.clear();
         alunos = db.consultarAlunos();
     }
 
-    public void adicionarMotorista(Motorista motorista){
-        motoristas.add(motorista);
+    public void adicionarMotorista(){
+        motoristas.clear();
+        motoristas = db.consultarMotoristas();
     }
 
     public void divirAlunosPorInstituicao(){
+        porInstituicao.clear();
         for (Aluno aluno : alunos){
             String instituicao = aluno.getInstituicao();
             List<Aluno> lista = porInstituicao.get(instituicao);
@@ -36,38 +39,47 @@ public class Lista extends MenuBase{
         }
     }
 
-    public void gerarLista(){
-        listaFinal = new HashMap<>();
+    public void gerarLista() {
+        listaFinal.clear();
         int totalVagas = vagasOnibus * motoristas.size();
-        if (totalVagas >= alunos.size()){
-            listaFinal.clear();
-            
 
-            List<Aluno> todosAlunos = new ArrayList<Aluno>();
-            for (List<Aluno> alunos : porInstituicao.values()){
+        System.out.println("Total de alunos: " + alunos.size());
+        System.out.println("Total de motoristas: " + motoristas.size());
+        System.out.println("Total de vagas disponíveis: " + totalVagas);
+
+        if (totalVagas >= alunos.size()) {
+            listaFinal.clear();
+
+            List<Aluno> todosAlunos = new ArrayList<>();
+            for (List<Aluno> alunos : porInstituicao.values()) {
                 todosAlunos.addAll(alunos);
             }
 
             int indiceOnibus = 0;
             int totalAlunos = todosAlunos.size();
 
-            for (int i = 0; i <= totalAlunos; i += vagasOnibus){
-                int fimDaLista = Math.min(i+vagasOnibus, totalAlunos);
-                List<Aluno> grupo = new ArrayList<Aluno>(todosAlunos.subList(i, fimDaLista));
+            for (int i = 0; i < totalAlunos; i += vagasOnibus) {
+                if (indiceOnibus >= motoristas.size()) {
+                    System.out.println("ERRO: Não há motoristas suficientes para todos os grupos de alunos.");
+                    break;
+                }
+
+                int fimDaLista = Math.min(i + vagasOnibus, totalAlunos);
+                List<Aluno> grupo = new ArrayList<>(todosAlunos.subList(i, fimDaLista));
 
                 listaFinal.put(motoristas.get(indiceOnibus), grupo);
-
-                if (motoristas.size() > indiceOnibus)
-                    indiceOnibus++;
+                indiceOnibus++;
             }
-        }
-        else{
+
+        } else {
             System.out.println("ERRO: Quantidade de onibus insuficiente!");
             pausarConsole();
         }
     }
 
+
     public void imprimirLista() {
+        limparConsole();
         if (listaFinal.size() != 0){
             for (Map.Entry<Motorista, List<Aluno>> entrada : listaFinal.entrySet()) {
                 System.out.println(entrada.getKey().getNome() + ":");
