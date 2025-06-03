@@ -1,20 +1,15 @@
 package com.project.DB;
 
-import com.project.entity.Admin;
-import com.project.entity.Aluno;
+
 import com.project.entity.Motorista;
 import com.project.entity.Usuario;
-import java.sql.Statement;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.crypto.Data;
-
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+
 
 public class MotoristaDBG extends UserDBG{
 
@@ -30,7 +25,6 @@ public class MotoristaDBG extends UserDBG{
                 return;
             }
 
-            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             Connection conn = db.getConnection();
 
             String sql = "INSERT INTO motorista (user_id, cpf, cnh, categoria_cnh, telefone, email, endereco) " +
@@ -52,7 +46,7 @@ public class MotoristaDBG extends UserDBG{
 
     public Motorista buscarMotorista(String nome, String senha) {
         Motorista motorista = null;
-        try {
+        try (Connection conn = db.getConnection()){
             String url = "jdbc:postgresql://localhost:5432/ubus_data";
             String sql = "SELECT u.nome, u.senha, m.* " +
                         "FROM users u " +
@@ -84,7 +78,7 @@ public class MotoristaDBG extends UserDBG{
 
     public List<Motorista> consultarMotoristas() {
         List<Motorista> lista = new ArrayList<>();
-        try {
+        try (Connection conn = db.getConnection()){
             String url = "jdbc:postgresql://localhost:5432/ubus_data";
             String sql = """
                 SELECT m.*, u.nome, u.senha

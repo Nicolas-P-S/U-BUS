@@ -17,6 +17,7 @@ public class MenuPrincipal extends MenuBase {
         db.conectar();
         db.criarBanco();
         db.criarTabelas();
+        pausarConsole();
 
         boolean continuar = false;
         ES es = new ES();

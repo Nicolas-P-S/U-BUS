@@ -22,8 +22,6 @@ public class AlunoDBG extends UserDBG{
             return;
         }
 
-        String url = "jdbc:postgresql://localhost:5432/ubus_data";
-
         String sql = "INSERT INTO alunos (" +
                     "user_id, nome_aluno, sobrenome_aluno, cpf, cep, endereco, bairro, curso, semestre, turno, instituicao, telefone, email" +
                     ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -54,8 +52,7 @@ public class AlunoDBG extends UserDBG{
 
    public Aluno buscarAluno(String nome, String senha) {
         Aluno aluno = null;
-        try {
-            String url = "jdbc:postgresql://localhost:5432/ubus_data";
+        try (Connection conn = db.getConnection()){
             String sql = "SELECT u.nome, u.senha, a.* " +
                         "FROM users u " +
                         "JOIN alunos a ON u.id = a.user_id " +
@@ -92,8 +89,7 @@ public class AlunoDBG extends UserDBG{
 
     public Aluno pesquisarAlunoPorCpf(String cpf) {
         Aluno aluno = null;
-        try {
-            String url = "jdbc:postgresql://localhost:5432/ubus_data";
+        try (Connection conn = db.getConnection()){
             String sql = """
                 SELECT a.*, u.nome, u.senha
                 FROM alunos a
@@ -137,8 +133,7 @@ public class AlunoDBG extends UserDBG{
 
     public List<Aluno> consultarAlunos() {
         List<Aluno> alunos = new ArrayList<>();
-        try {
-            String url = "jdbc:postgresql://localhost:5432/ubus_data";
+        try (Connection conn = db.getConnection()){
             String sql = "SELECT u.nome, u.senha, a.* FROM users u " +
                         "JOIN alunos a ON u.id = a.user_id";
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -171,8 +166,7 @@ public class AlunoDBG extends UserDBG{
     }
 
     public boolean atualizarPresencaAluno(String cpf, boolean vaiParaAula) {
-        try {
-            String url = "jdbc:postgresql://localhost:5432/ubus_data";
+        try (Connection conn = db.getConnection()){
             String verifica = "SELECT 1 FROM alunos WHERE cpf = ?";
             PreparedStatement stmtVerifica = conn.prepareStatement(verifica);
             stmtVerifica.setString(1, cpf);
@@ -194,7 +188,7 @@ public class AlunoDBG extends UserDBG{
             e.printStackTrace();
             return false;
         } finally {
-            try {
+            try (Connection conn = db.getConnection()){
                 if (conn != null)
                     conn.close();
             } catch (SQLException e) {

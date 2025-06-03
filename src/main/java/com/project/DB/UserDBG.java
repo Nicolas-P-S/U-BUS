@@ -9,22 +9,14 @@ import java.sql.ResultSet;
 
 public class UserDBG {
     DataBaseManager db;
-    Connection conn;
 
     public UserDBG(DataBaseManager db){
         this.db = db;
-        try {
-            this.conn = db.getConnection();    
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
     }
 
     public int salvarUsuario(Usuario usuario) {
         int userId = -1;
-        try {
-            String url = "jdbc:postgresql://localhost:5432/ubus_data";
+        try (Connection conn = db.getConnection()){
             String sql = "INSERT INTO users (nome, senha) VALUES (?, ?) RETURNING id";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, usuario.getNome());
@@ -43,8 +35,7 @@ public class UserDBG {
 
     public Usuario pesquisarUsuarioNome(String nome) {
         Usuario usuario = null;
-        try {
-            String url = "jdbc:postgresql://localhost:5432/ubus_data";
+        try (Connection conn = db.getConnection()){
             String sql = "SELECT * FROM users WHERE nome = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
 
@@ -62,8 +53,7 @@ public class UserDBG {
 
     public Usuario pesquisarUsuarioSenha(String senha) {
         Usuario usuario = null;
-        try {
-            String url = "jdbc:postgresql://localhost:5432/ubus_data";
+        try (Connection conn = db.getConnection()){
             String sql = "SELECT * FROM users WHERE senha = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
 

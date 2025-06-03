@@ -1,17 +1,12 @@
 package com.project.DB;
 
 import com.project.entity.Admin;
-import com.project.entity.Aluno;
-import com.project.entity.Motorista;
 import com.project.entity.Usuario;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+
 
 public class AdminDBG extends UserDBG{
     
@@ -20,7 +15,7 @@ public class AdminDBG extends UserDBG{
     }
 
     public void salvarAdmin(Admin admin) {
-        try {
+        try (Connection conn = db.getConnection()){
             int userId = salvarUsuario(new Usuario(admin.getNome(), admin.getSenha()));
             if (userId == -1) {
                 System.out.println("ERRO: não foi possível criar o usuário base.");
@@ -41,8 +36,7 @@ public class AdminDBG extends UserDBG{
 
     public Admin pesquisarAdminPorNome(String nome) {
         Admin admin = null;
-        try {
-            String url = "jdbc:postgresql://localhost:5432/ubus_data";
+        try (Connection conn = db.getConnection()){
             String sql = "SELECT u.id as user_id, u.nome, u.senha, a.email " +
                         "FROM users u " +
                         "JOIN admin a ON u.id = a.user_id " +
@@ -67,8 +61,7 @@ public class AdminDBG extends UserDBG{
 
     public Admin buscarAdmin(String nome, String senha) {
         Admin admin = null;
-        try {
-            String url = "jdbc:postgresql://localhost:5432/ubus_data";
+        try (Connection conn = db.getConnection()){
             String sql = "SELECT u.id as user_id, u.nome, u.senha, a.email " +
                         "FROM users u " +
                         "JOIN admin a ON u.id = a.user_id " +
