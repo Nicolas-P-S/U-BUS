@@ -6,6 +6,7 @@ import com.project.ES.Menu.MenusCadastro.MenuCadastroAluno;
 import com.project.ES.Menu.MenusCadastro.MenuCadastroMotorista;
 import com.project.entity.Admin;
 import com.project.entity.Aluno;
+import com.project.entity.Instituicao;
 import com.project.entity.Motorista;
 import com.project.entity.Usuario;
 import com.project.entity.MementoInterator.Lista;
@@ -113,8 +114,10 @@ public class MenuPrincipal extends MenuBase {
                     case 3 -> {
                         MenuCadastroAluno menuAluno = new MenuCadastroAluno();
                         Aluno aluno = menuAluno.cadastrarAluno();
+                        iDB.salvarInstituicao(aluno.getInstituicao());
+                        Instituicao instituicao = iDB.buscarInstituicao(aluno.getInstituicao());
                         
-                        alDB.salvarAluno(aluno);
+                        alDB.salvarAluno(aluno, instituicao.getId());
                         System.out.println("\nAluno cadastrado com sucesso!");
                         pausarConsole();
                     }

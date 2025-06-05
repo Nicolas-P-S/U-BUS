@@ -27,7 +27,7 @@ public class MotoristaDBG extends UserDBG{
 
             Connection conn = db.getConnection();
 
-            String sql = "INSERT INTO motorista (user_id, cpf, cnh, categoria_cnh, telefone, email, endereco) " +
+            String sql = "INSERT INTO motorista (usuario_id, cpf, cnh, categoria, telefone, email, endereco) " +
                         "VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userId);
@@ -47,7 +47,6 @@ public class MotoristaDBG extends UserDBG{
     public Motorista buscarMotorista(String nome, String senha) {
         Motorista motorista = null;
         try (Connection conn = db.getConnection()){
-            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             String sql = "SELECT u.nome, u.senha, m.* " +
                         "FROM users u " +
                         "JOIN motorista m ON u.id = m.user_id " +
@@ -79,11 +78,10 @@ public class MotoristaDBG extends UserDBG{
     public List<Motorista> consultarMotoristas() {
         List<Motorista> lista = new ArrayList<>();
         try (Connection conn = db.getConnection()){
-            String url = "jdbc:postgresql://localhost:5432/ubus_data";
             String sql = """
                 SELECT m.*, u.nome, u.senha
                 FROM motorista m
-                JOIN users u ON m.user_id = u.id
+                JOIN usuario u ON m.usuario_id = u.id
             """;
 
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -91,11 +89,11 @@ public class MotoristaDBG extends UserDBG{
 
             while (rs.next()) {
                 Motorista m = new Motorista(
-                        rs.getString("nome"), // nome de login (users)
-                        rs.getString("senha"),        // senha (users)
+                        rs.getString("nome"),
+                        rs.getString("senha"),
                         rs.getString("cpf"),
                         rs.getString("cnh"),
-                        rs.getString("categoria_cnh"),
+                        rs.getString("categoria"),
                         rs.getString("telefone"),
                         rs.getString("email"),
                         rs.getString("endereco")

@@ -52,55 +52,68 @@ public class DataBaseManager {
             conn = DriverManager.getConnection(url, user, pass);
             Statement stmt = conn.createStatement();
 
-            // Tabela de usuários base
-            String sqlUsers = "CREATE TABLE IF NOT EXISTS users (" +
+            String sqlUsers = "CREATE TABLE IF NOT EXISTS usuario (" +
                     "id SERIAL PRIMARY KEY, " +
                     "nome VARCHAR(100) NOT NULL UNIQUE, " +
                     "senha VARCHAR(100) NOT NULL" +
                     ")";
             stmt.executeUpdate(sqlUsers);
 
-            // Motorista
-            String sqlMotoristas = "CREATE TABLE IF NOT EXISTS motorista (" +
-                    "id SERIAL PRIMARY KEY, " +
-                    "user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE, " +
-                    "cpf VARCHAR(14) UNIQUE NOT NULL, " +
-                    "cnh VARCHAR(20) UNIQUE NOT NULL, " +
-                    "categoria_cnh VARCHAR(2) NOT NULL, " +
-                    "telefone VARCHAR(20), " +
-                    "email VARCHAR(100), " +
-                    "endereco TEXT" +
+            String sqlMotoristas = "CREATE TABLE IF NOT EXISTS motorista ("+
+                    "id_Motorista SERIAL PRIMARY KEY,"+
+                    "cpf VARCHAR(45) UNIQUE,"+
+                    "categoria VARCHAR(45),"+
+                    "telefone VARCHAR(45),"+
+                    "email VARCHAR(45),"+
+                    "endereco VARCHAR(45),"+
+                    "cnh VARCHAR(45),"+
+                    "usuario_id INT REFERENCES usuario(id),"+
+                    "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"+
+                    "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"+
                     ")";
             stmt.executeUpdate(sqlMotoristas);
 
-            // Administrador
-            String sqlAdmin = "CREATE TABLE IF NOT EXISTS admin (" +
-                    "id SERIAL PRIMARY KEY, " +
-                    "user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE, " +
-                    "email VARCHAR(100)" +
+            String sqlAdmin = "CREATE TABLE IF NOT EXISTS admin ("+
+                    "id SERIAL PRIMARY KEY,"+
+                    "usuario_id INT UNIQUE REFERENCES usuario(id),"+
+                    "email VARCHAR(100) NOT NULL,"+
+                    "senha VARCHAR(100) NOT NULL,"+
+                    "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"+
+                    "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"+
                     ")";
             stmt.executeUpdate(sqlAdmin);
 
-            // Aluno
-            String sqlAlunos = "CREATE TABLE IF NOT EXISTS alunos (" +
-                    "id SERIAL PRIMARY KEY, " +
-                    "user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE, " +
-                    "nome_aluno VARCHAR(100) NOT NULL, " + 
-                    "sobrenome_aluno VARCHAR(100) NOT NULL, " +
-                    "cpf VARCHAR(14) UNIQUE NOT NULL, " +
-                    "cep VARCHAR(9) NOT NULL, " +
-                    "endereco TEXT NOT NULL, " +
-                    "bairro VARCHAR(50) NOT NULL, " +
-                    "curso VARCHAR(50) NOT NULL, " +
-                    "semestre INTEGER NOT NULL, " +
-                    "turno VARCHAR(20) NOT NULL, " +
-                    "instituicao VARCHAR(100) NOT NULL, " +
-                    "telefone VARCHAR(20) NOT NULL, " +
-                    "email VARCHAR(100) NOT NULL, " +
-                    "vai_para_aula BOOLEAN DEFAULT FALSE, " +
-                    "data_ultima_presenca TIMESTAMP" +
+            String sqlInstituicao = "CREATE TABLE IF NOT EXISTS instituicao ("+
+                    "id SERIAL PRIMARY KEY,"+
+                    "nome VARCHAR(100) UNIQUE NOT NULL,"+
+                    "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"+
+                    "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"+
+                    ")";
+            stmt.executeUpdate(sqlInstituicao);
+
+            String sqlAlunos = "CREATE TABLE IF NOT EXISTS aluno ("+
+                    "id SERIAL PRIMARY KEY,"+
+                    "nome_aluno VARCHAR(100) NOT NULL,"+
+                    "sobrenome_aluno VARCHAR(100) NOT NULL,"+
+                    "cpf VARCHAR(14) UNIQUE,"+
+                    "curso VARCHAR(100),"+
+                    "semestre INT,"+
+                    "turno VARCHAR(20),"+
+                    "rua VARCHAR(100),"+
+                    "bairro VARCHAR(50),"+
+                    "cep VARCHAR(10),"+
+                    "telefone VARCHAR(20),"+
+                    "email VARCHAR(100),"+
+                    "instituicao_id INT REFERENCES instituicao(id),"+
+                    "usuario_id INT UNIQUE REFERENCES usuario(id),"+
+                    "vai_para_aula BOOLEAN DEFAULT FALSE,"+
+                    "data_ultima_presenca TIMESTAMP,"+
+                    "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"+
+                    "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"+
                     ")";
             stmt.executeUpdate(sqlAlunos);
+
+
 
             System.out.println("Tabelas criadas/verificadas com sucesso!");
         } catch (Exception e) {

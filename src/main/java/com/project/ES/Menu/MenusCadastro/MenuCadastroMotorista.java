@@ -33,63 +33,63 @@ public class MenuCadastroMotorista extends MenuBase {
     }
 
     String lerComValidacao(String campo, int min, int max) {
-    String input = "";
-    boolean valido = false;
+        String input = "";
+        boolean valido = false;
 
-    while (!valido) {
-        limparConsole();
+        while (!valido) {
+            limparConsole();
 
-        System.out.println("\n╔═════════════════════════════╗");
-        System.out.println("║  PREENCHA OS DADOS ABAIXO:  ║");
-        System.out.println("╚═════════════════════════════╝\n");
+            System.out.println("\n╔═════════════════════════════╗");
+            System.out.println("║  PREENCHA OS DADOS ABAIXO:  ║");
+            System.out.println("╚═════════════════════════════╝\n");
 
-        System.out.print(campo + ": ");
-        input = es.entradaString().trim();
+            System.out.print(campo + ": ");
+            input = es.entradaString().trim();
 
-        if (input.length() < min || input.length() > max) {
-            mostrarErro("O campo \"" + campo + "\" deve ter entre " + min + " e " + max + " caracteres.");
-            continue;
+            if (input.length() < min || input.length() > max) {
+                mostrarErro("O campo \"" + campo + "\" deve ter entre " + min + " e " + max + " caracteres.");
+                continue;
+            }
+
+            switch (campo.toLowerCase()) {
+                case "cpf (somente numeros)":
+                    if (!input.matches("\\d{11}")) {
+                        mostrarErro("CPF deve conter exatamente 11 numeros.");
+                        continue;
+                    }
+                    break;
+                case "cnh":
+                    if (!input.matches("\\d{9}")) {
+                        mostrarErro("CNH deve conter exatamente 9 numeros.");
+                        continue;
+                    }
+                    break;
+                case "categoria da cnh":
+                    if (input.length() > 3) {
+                        mostrarErro("Categoria da CNH deve ter no maximo 3 caracteres.");
+                        continue;
+                    }
+                    break;
+                case "telefone (com ddd)":
+                case "telefone":
+                    if (!input.matches("\\d{10,11}")) {
+                        mostrarErro("Telefone deve conter entre 10 e 11 digitos numericos.");
+                        continue;
+                    }
+                    break;
+                case "email":
+                    if (!input.contains("@") || !input.contains(".")) {
+                        mostrarErro("E-mail invalido. Verifique o formato (ex: exemplo@email.com).");
+                        continue;
+                    }
+                    break;
+            }
+
+            valido = true;
         }
 
-        switch (campo.toLowerCase()) {
-            case "cpf (somente numeros)":
-                if (!input.matches("\\d{11}")) {
-                    mostrarErro("CPF deve conter exatamente 11 numeros.");
-                    continue;
-                }
-                break;
-            case "cnh":
-                if (!input.matches("\\d{9}")) {
-                    mostrarErro("CNH deve conter exatamente 9 numeros.");
-                    continue;
-                }
-                break;
-            case "categoria da cnh":
-                if (input.length() > 3) {
-                    mostrarErro("Categoria da CNH deve ter no maximo 3 caracteres.");
-                    continue;
-                }
-                break;
-            case "telefone (com ddd)":
-            case "telefone":
-                if (!input.matches("\\d{10,11}")) {
-                    mostrarErro("Telefone deve conter entre 10 e 11 digitos numericos.");
-                    continue;
-                }
-                break;
-            case "email":
-                if (!input.contains("@") || !input.contains(".")) {
-                    mostrarErro("E-mail invalido. Verifique o formato (ex: exemplo@email.com).");
-                    continue;
-                }
-                break;
-        }
-
-        valido = true;
+        return input;
     }
-
-    return input;
-}
 
 
     private void mostrarErro(String mensagem) {

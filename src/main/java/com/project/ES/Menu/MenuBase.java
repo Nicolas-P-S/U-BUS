@@ -8,6 +8,7 @@ public class MenuBase {
     public UserDBG uDB = new UserDBG(db);
     public AlunoDBG alDB = new AlunoDBG(db);
     public AdminDBG adDB = new AdminDBG(db);
+    public InstituicaoDBG iDB = new InstituicaoDBG(db);
 
     public ES es = new ES();
     public void limparConsole(){

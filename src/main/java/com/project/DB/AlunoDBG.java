@@ -15,15 +15,16 @@ public class AlunoDBG extends UserDBG{
         super(db);
     }
 
-    public void salvarAluno(Aluno aluno) {
+    public void salvarAluno(Aluno aluno, int instituicao_id) {
+        InstituicaoDBG iDB = new InstituicaoDBG(db);
         int userId = salvarUsuario(new Usuario(aluno.getNome(), aluno.getSenha()));
         if (userId == -1) {
             System.out.println("ERRO: não foi possível criar o usuário base do aluno.");
             return;
         }
 
-        String sql = "INSERT INTO alunos (" +
-                    "user_id, nome_aluno, sobrenome_aluno, cpf, cep, endereco, bairro, curso, semestre, turno, instituicao, telefone, email" +
+        String sql = "INSERT INTO aluno (" +
+                    "usuario_id, nome_aluno, sobrenome_aluno, cpf, cep, rua, bairro, curso, semestre, turno, instituicao_id, telefone, email" +
                     ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (
@@ -40,7 +41,7 @@ public class AlunoDBG extends UserDBG{
             stmt.setString(8, aluno.getCurso());
             stmt.setInt(9, aluno.getSemestre());
             stmt.setString(10, aluno.getTurno());
-            stmt.setString(11, aluno.getInstituicao());
+            stmt.setInt(11, iDB.buscarInstituicao(aluno.getInstituicao()).getId());
             stmt.setString(12, aluno.getTelefone());
             stmt.setString(13, aluno.getEmail());
 
@@ -54,8 +55,8 @@ public class AlunoDBG extends UserDBG{
         Aluno aluno = null;
         try (Connection conn = db.getConnection()){
             String sql = "SELECT u.nome, u.senha, a.* " +
-                        "FROM users u " +
-                        "JOIN alunos a ON u.id = a.user_id " +
+                        "FROM usuario u " +
+                        "JOIN aluno a ON u.id = a.usuario_id " +
                         "WHERE u.nome = ? AND u.senha = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, nome);
@@ -70,7 +71,7 @@ public class AlunoDBG extends UserDBG{
                     rs.getString("sobrenome_aluno"),
                     rs.getString("cpf"),
                     rs.getString("cep"),
-                    rs.getString("endereco"),
+                    rs.getString("rua"),
                     rs.getString("bairro"),
                     rs.getString("curso"),
                     rs.getInt("semestre"),
@@ -92,8 +93,8 @@ public class AlunoDBG extends UserDBG{
         try (Connection conn = db.getConnection()){
             String sql = """
                 SELECT a.*, u.nome, u.senha
-                FROM alunos a
-                JOIN users u ON a.id = u.id
+                FROM aluno a
+                JOIN usuario u ON a.id = u.id
                 WHERE a.cpf = ?;
                 """;
 
@@ -132,10 +133,11 @@ public class AlunoDBG extends UserDBG{
     }
 
     public List<Aluno> consultarAlunos() {
+        InstituicaoDBG iDB = new InstituicaoDBG(db);
         List<Aluno> alunos = new ArrayList<>();
         try (Connection conn = db.getConnection()){
-            String sql = "SELECT u.nome, u.senha, a.* FROM users u " +
-                        "JOIN alunos a ON u.id = a.user_id";
+            String sql = "SELECT u.nome, u.senha, a.* FROM usuario u " +
+                        "JOIN aluno a ON u.id = a.usuario_id";
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
 
@@ -147,12 +149,12 @@ public class AlunoDBG extends UserDBG{
                     rs.getString("sobrenome_aluno"),
                     rs.getString("cpf"),
                     rs.getString("cep"),
-                    rs.getString("endereco"),
+                    rs.getString("rua"),
                     rs.getString("bairro"),
                     rs.getString("curso"),
                     rs.getInt("semestre"),
                     rs.getString("turno"),
-                    rs.getString("instituicao"),
+                    iDB.buscarInstituicao(rs.getInt("instituicao_id")).getNome(),
                     rs.getString("telefone"),
                     rs.getString("email")
                 );
@@ -167,7 +169,7 @@ public class AlunoDBG extends UserDBG{
 
     public boolean atualizarPresencaAluno(String cpf, boolean vaiParaAula) {
         try (Connection conn = db.getConnection()){
-            String verifica = "SELECT 1 FROM alunos WHERE cpf = ?";
+            String verifica = "SELECT 1 FROM aluno WHERE cpf = ?";
             PreparedStatement stmtVerifica = conn.prepareStatement(verifica);
             stmtVerifica.setString(1, cpf);
             ResultSet rs = stmtVerifica.executeQuery();
@@ -176,7 +178,7 @@ public class AlunoDBG extends UserDBG{
                 return false;
             }
 
-            String sql = "UPDATE alunos SET vai_para_aula = ?, data_ultima_presenca = CURRENT_TIMESTAMP WHERE cpf = ?";
+            String sql = "UPDATE aluno SET vai_para_aula = ?, data_ultima_presenca = CURRENT_TIMESTAMP WHERE cpf = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setBoolean(1, vaiParaAula);
             stmt.setString(2, cpf);

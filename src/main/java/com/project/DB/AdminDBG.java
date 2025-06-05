@@ -22,11 +22,11 @@ public class AdminDBG extends UserDBG{
                 return;
             }
 
-            String url = "jdbc:postgresql://localhost:5432/ubus_data";
-            String sql = "INSERT INTO admin (user_id, email) VALUES (?, ?)";
+            String sql = "INSERT INTO admin (usuario_id, email, senha) VALUES (?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userId);
             stmt.setString(2, admin.getEmail());
+            stmt.setString(3, admin.getSenha());
             stmt.executeUpdate();
 
         } catch (Exception e) {
@@ -38,8 +38,8 @@ public class AdminDBG extends UserDBG{
         Admin admin = null;
         try (Connection conn = db.getConnection()){
             String sql = "SELECT u.id as user_id, u.nome, u.senha, a.email " +
-                        "FROM users u " +
-                        "JOIN admin a ON u.id = a.user_id " +
+                        "FROM usuario u " +
+                        "JOIN admin a ON u.id = a.usuario_id " +
                         "WHERE u.nome = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, nome);
@@ -63,8 +63,8 @@ public class AdminDBG extends UserDBG{
         Admin admin = null;
         try (Connection conn = db.getConnection()){
             String sql = "SELECT u.id as user_id, u.nome, u.senha, a.email " +
-                        "FROM users u " +
-                        "JOIN admin a ON u.id = a.user_id " +
+                        "FROM usuario u " +
+                        "JOIN admin a ON u.id = a.usuario_id " +
                         "WHERE u.nome = ? AND u.senha = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, nome);

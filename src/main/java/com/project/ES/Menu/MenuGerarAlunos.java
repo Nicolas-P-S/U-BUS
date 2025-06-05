@@ -1,5 +1,6 @@
 package com.project.ES.Menu;
 import com.project.entity.Aluno;
+import com.project.entity.Instituicao;
 
 public class MenuGerarAlunos extends MenuBase{
     public void logoGerarAlunos() {
@@ -56,7 +57,9 @@ public class MenuGerarAlunos extends MenuBase{
         for (int i = 0; i < quantidade; i++){
             Aluno aluno = new Aluno();
             aluno.gerarInfos();
-            alDB.salvarAluno(aluno);
+            iDB.salvarInstituicao(aluno.getInstituicao());
+            Instituicao instituicao = iDB.buscarInstituicao(aluno.getInstituicao());
+            alDB.salvarAluno(aluno, instituicao.getId());
         }
     }
 }

@@ -17,7 +17,7 @@ public class UserDBG {
     public int salvarUsuario(Usuario usuario) {
         int userId = -1;
         try (Connection conn = db.getConnection()){
-            String sql = "INSERT INTO users (nome, senha) VALUES (?, ?) RETURNING id";
+            String sql = "INSERT INTO usuario (nome, senha) VALUES (?, ?) RETURNING id";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, usuario.getNome());
             stmt.setString(2, usuario.getSenha());
@@ -36,7 +36,7 @@ public class UserDBG {
     public Usuario pesquisarUsuarioNome(String nome) {
         Usuario usuario = null;
         try (Connection conn = db.getConnection()){
-            String sql = "SELECT * FROM users WHERE nome = ?";
+            String sql = "SELECT * FROM usuario WHERE nome = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
 
             stmt.setString(1, nome);
@@ -54,7 +54,7 @@ public class UserDBG {
     public Usuario pesquisarUsuarioSenha(String senha) {
         Usuario usuario = null;
         try (Connection conn = db.getConnection()){
-            String sql = "SELECT * FROM users WHERE senha = ?";
+            String sql = "SELECT * FROM usuario WHERE senha = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
 
             stmt.setString(1, senha);
